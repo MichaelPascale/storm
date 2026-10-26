@@ -5,6 +5,9 @@ import webpack from "webpack";
 // in case you run into any TypeScript error when configuring `devServer`
 import "webpack-dev-server";
 
+import "webpack-favicons";
+import WebpackFavicons from "webpack-favicons";
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -31,6 +34,14 @@ const config: webpack.Configuration = {
       directory: __dirname,
     }
   },
+  plugins: [
+    new WebpackFavicons({
+      src: "storm-favicon.svg",
+      icons: {
+        favicons: true
+      }
+    })
+  ]
 };
 
 export default config;

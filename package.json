@@ -24,11 +24,13 @@
   "devDependencies": {
     "@types/node": "^26.6.5",
     "eslint": "^10.13.0",
+    "html-webpack-plugin": "^5.6.8",
     "ts-node": "^10.9.2",
     "typescript": "^6.0.0",
     "webpack": "^5.112.0",
     "webpack-cli": "^7.2.3",
-    "webpack-dev-server": "^6.1.0"
+    "webpack-dev-server": "^6.1.0",
+    "webpack-favicons": "^1.5.43"
   },
   "dependencies": {
     "jspsych": "^8.3.0",
