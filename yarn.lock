@@ -627,6 +627,42 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@jspsych/plugin-html-keyboard-response@npm:^2.2.0":
+  version: 2.2.0
+  resolution: "@jspsych/plugin-html-keyboard-response@npm:2.2.0"
+  peerDependencies:
+    jspsych: ">=7.1.0"
+  checksum: 10c0/49d4d5ddb0dfa9216346ea5d0e703b1c1a9ec5fa97011ecb3e3855d4549f86ea72c7772e7ab22fabcbf1ac26ac31b5226afc56f776a8ef9ee487d109e7424d43
+  languageName: node
+  linkType: hard
+
+"@jspsych/plugin-html-slider-response@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "@jspsych/plugin-html-slider-response@npm:2.1.0"
+  peerDependencies:
+    jspsych: ">=7.1.0"
+  checksum: 10c0/ffbb7d16f40870454ff627f3e4694fc98a81b699b2afa7aa72a017d2ae02cbc66eb6441fcdcbb0327c99aa7956a97dcfa46fae657b1e12a8128a7e48f0e1dec8
+  languageName: node
+  linkType: hard
+
+"@jspsych/plugin-instructions@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "@jspsych/plugin-instructions@npm:2.1.0"
+  peerDependencies:
+    jspsych: ">=7.1.0"
+  checksum: 10c0/c38428a6ecb1c8d65ec8a24b5b88c5494d93f91fa24ecb88a55ea3c4daae6f4fc9ca0e8edc897052d0e94020efbf795818aba8325fdbd8949ccad40175171993
+  languageName: node
+  linkType: hard
+
+"@jspsych/plugin-survey-text@npm:^2.1.1":
+  version: 2.1.1
+  resolution: "@jspsych/plugin-survey-text@npm:2.1.1"
+  peerDependencies:
+    jspsych: ">=7.1.0"
+  checksum: 10c0/c81e26a325dd08c15a70d1b361d148c277b217470874d157a50a49cc7b5d701f08dc7b19a5f36dd0409d21db9487400dbf00a39e3baab92d8e2d73848f00dce7
+  languageName: node
+  linkType: hard
+
 "@keyv/bigmap@npm:^1.3.1":
   version: 1.3.1
   resolution: "@keyv/bigmap@npm:1.3.1"
@@ -3771,6 +3807,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "storm@workspace:."
   dependencies:
+    "@jspsych/plugin-html-keyboard-response": "npm:^2.2.0"
+    "@jspsych/plugin-html-slider-response": "npm:^2.1.0"
+    "@jspsych/plugin-instructions": "npm:^2.1.0"
+    "@jspsych/plugin-survey-text": "npm:^2.1.1"
     "@types/node": "npm:^26.6.5"
     eslint: "npm:^10.13.0"
     html-webpack-plugin: "npm:^5.6.8"
