@@ -47,7 +47,7 @@ const config = (env: any, argv: {mode?: webpack.Configuration["mode"]}): webpack
         }
       }),
       new webpack.DefinePlugin({
-        PRODUCTION: JSON.stringify(MODE),
+        PRODUCTION: JSON.stringify(MODE == "production"),
         VERSION: JSON.stringify(pkginfo.version),
         BUILD: JSON.stringify(
           "Build: v" + pkginfo.version + 
