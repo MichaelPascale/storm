@@ -627,6 +627,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@jspsych/plugin-fullscreen@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "@jspsych/plugin-fullscreen@npm:2.1.0"
+  peerDependencies:
+    jspsych: ">=7.1.0"
+  checksum: 10c0/7f3d76c943b6b984fc3677e167e99d9fb6af6acf80cb8cb01d296352423a21a1720c110e861b4378f1b856145558133055e8400e5a0b6470c8d3ca61b2a74b4e
+  languageName: node
+  linkType: hard
+
 "@jspsych/plugin-html-keyboard-response@npm:^2.2.0":
   version: 2.2.0
   resolution: "@jspsych/plugin-html-keyboard-response@npm:2.2.0"
@@ -645,12 +654,30 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@jspsych/plugin-image-keyboard-response@npm:^2.2.0":
+  version: 2.2.0
+  resolution: "@jspsych/plugin-image-keyboard-response@npm:2.2.0"
+  peerDependencies:
+    jspsych: ">=7.1.0"
+  checksum: 10c0/342d25a79b75784726544bc2b127dfde3b938293b4ed0bc1afd2eeab5a91df974e4f2b0ea5a49c90d11373e283d1d888fbfc019ef897dd6740a62d90be29ade0
+  languageName: node
+  linkType: hard
+
 "@jspsych/plugin-instructions@npm:^2.1.0":
   version: 2.1.0
   resolution: "@jspsych/plugin-instructions@npm:2.1.0"
   peerDependencies:
     jspsych: ">=7.1.0"
   checksum: 10c0/c38428a6ecb1c8d65ec8a24b5b88c5494d93f91fa24ecb88a55ea3c4daae6f4fc9ca0e8edc897052d0e94020efbf795818aba8325fdbd8949ccad40175171993
+  languageName: node
+  linkType: hard
+
+"@jspsych/plugin-preload@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "@jspsych/plugin-preload@npm:2.1.0"
+  peerDependencies:
+    jspsych: ">=7.1.0"
+  checksum: 10c0/fbcfd1f5c905d0f5c7694ef548aea1712d99a842e0977ec99d3e526d8cddf5464c6e8795410a4f2a8f6b50f84620d0889be9fa384634b001bfb4de62f52c500b
   languageName: node
   linkType: hard
 
@@ -3807,9 +3834,12 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "storm@workspace:."
   dependencies:
+    "@jspsych/plugin-fullscreen": "npm:^2.1.0"
     "@jspsych/plugin-html-keyboard-response": "npm:^2.2.0"
     "@jspsych/plugin-html-slider-response": "npm:^2.1.0"
+    "@jspsych/plugin-image-keyboard-response": "npm:^2.2.0"
     "@jspsych/plugin-instructions": "npm:^2.1.0"
+    "@jspsych/plugin-preload": "npm:^2.1.0"
     "@jspsych/plugin-survey-text": "npm:^2.1.1"
     "@types/node": "npm:^26.6.5"
     eslint: "npm:^10.13.0"
