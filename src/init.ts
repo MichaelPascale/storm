@@ -4,10 +4,11 @@
  * Copyright (c) 2026, Michael P. Pascale <mpascale@bu.edu>
  * SPDX-License-Identifier: MIT
  * 
- * Last modified: 2026-11-03
+ * Last modified: 2026-11-04
  */
 
 import {initJsPsych} from 'jspsych';
+import jsp_browser from '@jspsych/plugin-browser-check';
 import jsp_preload from '@jspsych/plugin-preload';
 import jsp_fullscr from '@jspsych/plugin-fullscreen';
 import jsp_ins from '@jspsych/plugin-instructions';
@@ -53,7 +54,21 @@ const jsPsych = initJsPsych({
     }
 });
 
+
 const timeline: any[] = [];
+
+timeline.push({
+    type: jsp_browser,
+    inclusion_function: (detected: any) => {
+        return ['chrome', 'firefox'].includes(detected.browser) && !detected.mobile;
+    },
+    exclusion_message: (detected: any) => {
+        if (detected.mobile)
+            return '<p>This experiment cannot be completed on a mobile device.</p>';
+        
+        return '<p>This experiment is not compatible with your web browser.</p>';
+    }
+});
 
 timeline.push({ 
     type: jsp_preload, 
@@ -82,7 +97,7 @@ for (let i = 0; i < 10; i++) {
     timeline.push([
         {
             type: jsp_key,
-            stimulus:  `<img src=\"${storm_config.url_stimuli}${storm_stimuli[i+1]}\">`,
+            stimulus:  `<img src=\"${storm_config.url_stimuli}${storm_stimuli[i+1]}\" style="width: 100mm; height: 100mm;">`,
             choices: "NO_KEYS",
             trial_duration: storm_config.timing.stim
         },
@@ -94,7 +109,7 @@ for (let i = 0; i < 10; i++) {
         },
         {
             type: jsp_vas,
-            stimulus: "How confident are you in your guess?",
+            stimulus: storm_config.messages.confidence,
             slider_width: 300,
             labels: ["0% Certain", "100% Certain"],
             prompt: null,

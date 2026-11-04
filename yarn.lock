@@ -627,6 +627,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@jspsych/plugin-browser-check@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "@jspsych/plugin-browser-check@npm:2.1.0"
+  dependencies:
+    detect-browser: "npm:^5.2.1"
+  peerDependencies:
+    jspsych: ">=7.1.0"
+  checksum: 10c0/daac58c8610f159fd3755bdadac1f5810f7de83f24df081c6ec10486a0ef4786b13d4905695e01d38f3c19e15248ead1630feb2d9265f3812b608b62c87beecb
+  languageName: node
+  linkType: hard
+
 "@jspsych/plugin-fullscreen@npm:^2.1.0":
   version: 2.1.0
   resolution: "@jspsych/plugin-fullscreen@npm:2.1.0"
@@ -1818,6 +1829,13 @@ __metadata:
   version: 1.2.0
   resolution: "destroy@npm:1.2.0"
   checksum: 10c0/bd7633942f57418f5a3b80d5cb53898127bcf53e24cdf5d5f4396be471417671f0fee48a4ebe9a1e9defbde2a31280011af58a57e090ff822f589b443ed4e643
+  languageName: node
+  linkType: hard
+
+"detect-browser@npm:^5.2.1":
+  version: 5.3.0
+  resolution: "detect-browser@npm:5.3.0"
+  checksum: 10c0/88d49b70ce3836e7971345b2ebdd486ad0d457d1e4f066540d0c12f9210c8f731ccbed955fcc9af2f048f5d4629702a8e46bedf5bcad42ad49a3a0927bfd5a76
   languageName: node
   linkType: hard
 
@@ -3834,6 +3852,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "storm@workspace:."
   dependencies:
+    "@jspsych/plugin-browser-check": "npm:^2.1.0"
     "@jspsych/plugin-fullscreen": "npm:^2.1.0"
     "@jspsych/plugin-html-keyboard-response": "npm:^2.2.0"
     "@jspsych/plugin-html-slider-response": "npm:^2.1.0"

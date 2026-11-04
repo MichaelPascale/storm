@@ -34,6 +34,7 @@
     "webpack-favicons": "^1.5.43"
   },
   "dependencies": {
+    "@jspsych/plugin-browser-check": "^2.1.0",
     "@jspsych/plugin-fullscreen": "^2.1.0",
     "@jspsych/plugin-html-keyboard-response": "^2.2.0",
     "@jspsych/plugin-html-slider-response": "^2.1.0",

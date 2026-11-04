@@ -6,6 +6,7 @@ import webpack from "webpack";
 import "webpack-dev-server";
 import WebpackFavicons from "webpack-favicons";
 import pkginfo from "./package.json" with {type: "json"};
+import expinfo from "./src/config.json" with {type: "json"};
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -53,7 +54,7 @@ const config = (env: any, argv: {mode?: webpack.Configuration["mode"]}): webpack
           "Build: v" + pkginfo.version + 
           " (" + MODE + ") from " + 
           execSync("git rev-parse --short HEAD").toString('utf-8').trim() + 
-          " at " + (new Date()).toISOString()
+          " at " + (new Date()).toISOString() + " for experiment \"" + expinfo.name +"\""
         )
       }),
     ]

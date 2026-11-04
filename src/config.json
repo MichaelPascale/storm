@@ -5,6 +5,7 @@
     "url_stimuli": "/assets/stimuli/",
     "url_redirect": null,
     "messages": {
+        "confidence": "How confident are you that your guess is correct?",
         "loading": "The study is loading. Please wait...",
         "fullscreen": "When you are ready to begin, click the button to start the experiment in full-screen mode.<br/>",
         "completion": "The study is complete. You will be redirected.",
