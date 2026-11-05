@@ -3,13 +3,23 @@
     "webtitle": "Research Study",
     "url_post": "/upload.php",
     "url_stimuli": "/assets/stimuli/",
+    "url_stim_demo": [
+        "/assets/stimuli/demo.jpg"
+    ],
     "url_redirect": null,
     "trials": 40,
     "messages": {
+        "instructions": [
+            "You will be shown pictures of different objects.",
+            "After each picture, you will provide your <b>best guess</b> as to the name of the object.",
+            "You will then rate your <b>confidence</b> that your guess was right (0% to 100% certain).",
+        ],
         "guess": "What is your <b>best guess</b> for the name of the object?",
         "confidence": "How confident are you that your guess is correct?",
         "loading": "The study is loading. Please wait...",
         "fullscreen": "When you are ready to begin, click the button to start the experiment in full-screen mode.<br/>",
+        "completion": "The study is complete. You may now close this window.",
+        "error": "There was an error and the study cannot continue. We apologize for the inconvenience.",
         "exclude_device": "This experiment cannot be completed on a mobile device.",
         "exclude_browser": "This experiment is not compatible with your web browser."
     },

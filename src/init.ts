@@ -19,6 +19,7 @@ import jsp_vas from '@jspsych/plugin-html-slider-response';
 
 import storm_config from "./config.json" with {type: "json"};
 import storm_stimuli from "./stimuli.json" with {type: "json"};
+import experiment from './experiment';
 
 console.log(BUILD);
 document.title = storm_config.webtitle ?? storm_config.name;
@@ -91,35 +92,7 @@ if (PRODUCTION) {
     });
 }
 
-timeline.push({
-    timeline: [
-        {
-            type: jsp_key,
-            stimulus: ()=>`<img src=\"${storm_config.url_stimuli}${jsPsych.evaluateTimelineVariable("image_id")}\" style="width: 100mm; height: 100mm; filter: blur(5px);">`,
-            choices: "NO_KEYS",
-            trial_duration: storm_config.timing.stim
-        },
-        {
-            type: jsp_txt,
-            questions: [{prompt: storm_config.messages.guess}]
-        },
-        {
-            type: jsp_vas,
-            stimulus: storm_config.messages.confidence,
-            slider_width: 300,
-            labels: ["0% Certain", "100% Certain"],
-            prompt: null,
-            slider_start: 50,
-            stimulus_duration: null,
-            trial_duration: storm_config.timing.resp2
-        },
-    ],
-    timeline_variables: storm_stimuli.map((x)=>({image_id: x})),
-    sample: {
-        type: "with-replacement",
-        size: storm_config.trials
-    }
-});
+timeline.push(experiment(jsPsych));
 
 if (PRODUCTION)
     timeline.push({type: jsp_fullscr, fullscreen_mode: false});
