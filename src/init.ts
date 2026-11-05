@@ -4,7 +4,7 @@
  * Copyright (c) 2026, Michael P. Pascale <mpascale@bu.edu>
  * SPDX-License-Identifier: MIT
  * 
- * Last modified: 2026-11-04
+ * Last modified: 2026-11-05
  */
 
 import {initJsPsych} from 'jspsych';
@@ -64,9 +64,9 @@ timeline.push({
     },
     exclusion_message: (detected: any) => {
         if (detected.mobile)
-            return '<p>This experiment cannot be completed on a mobile device.</p>';
+            return storm_config.messages.exclude_device;
         
-        return '<p>This experiment is not compatible with your web browser.</p>';
+        return storm_config.messages.exclude_browser;
     }
 });
 
@@ -91,21 +91,17 @@ if (PRODUCTION) {
     });
 }
 
-for (let i = 0; i < 10; i++) {
-    // TODO: For now these are hard-coded, but it would be nice if there was
-    // flexibility to read common types from a study configuration file.
-    timeline.push([
+timeline.push({
+    timeline: [
         {
             type: jsp_key,
-            stimulus:  `<img src=\"${storm_config.url_stimuli}${storm_stimuli[i+1]}\" style="width: 100mm; height: 100mm;">`,
+            stimulus: ()=>`<img src=\"${storm_config.url_stimuli}${jsPsych.evaluateTimelineVariable("image_id")}\" style="width: 100mm; height: 100mm; filter: blur(5px);">`,
             choices: "NO_KEYS",
             trial_duration: storm_config.timing.stim
         },
         {
             type: jsp_txt,
-            questions: [
-                {prompt: "What is your <b>best guess</b> for the name of the object?"},
-            ]
+            questions: [{prompt: storm_config.messages.guess}]
         },
         {
             type: jsp_vas,
@@ -116,9 +112,14 @@ for (let i = 0; i < 10; i++) {
             slider_start: 50,
             stimulus_duration: null,
             trial_duration: storm_config.timing.resp2
-        }
-    ]);
-}
+        },
+    ],
+    timeline_variables: storm_stimuli.map((x)=>({image_id: x})),
+    sample: {
+        type: "with-replacement",
+        size: storm_config.trials
+    }
+});
 
 if (PRODUCTION)
     timeline.push({type: jsp_fullscr, fullscreen_mode: false});
