@@ -82,9 +82,11 @@
             var query = new URLSearchParams(window.location.search);
 
             // Define blur levels as 20 even steps on a logarithmic scale from 50 to 1.
-            var levels = [50.000, 40.696, 33.123, 26.959, 21.943, 17.860, 14.536, 11.831,  9.630,  7.838,  6.379,  5.192,  4.226,  3.440, 2.800,  2.279,  1.855, 1.510, 1.229,  1.000, 0];
+            var levels = [
+                20, 15.886565, 12.619147, 10.023745,  7.962143,  6.324555,  5.023773,  3.990525,  3.169786, 2.517851,  2, 1, 0
+            ];
             var stimuli;
-            var n_trials = 524;
+            var n_trials = 15;
             var idx_stim = -1;
             var idx_level = 0;
 
@@ -105,7 +107,7 @@
                     "innerHeight": window.innerHeight
                 },
                 "experiment": {
-                    "task": "pcrm/things/images_THINGSplus-CC0/gt20lt60sdlt75-20251223",
+                    "task": "pcsn/f26/stim/things-320-shine",
                     "levels": levels
                 },
                 "events": []
@@ -121,7 +123,7 @@
             };
 
             function stim_advance() {
-                if (idx_level > 20) {
+                if (idx_level > 12) {
                     stim_next();
                     return;
                 }
@@ -135,6 +137,23 @@
                 img_stim.style.filter = filter;
                 idx_level++;
             };
+
+            function stim_clear() {
+                if (idx_level > 12) {
+                    stim_next();
+                    return;
+                }
+                // Calculate the radius for the Gaussian blur.
+                idx_level=12;
+                sd = 0;
+                filter = `blur(${sd}px)`;
+
+                log('clear:' + filter);
+                time_appeared = new Date();
+                
+                img_stim.style.filter = filter;
+                idx_level++;
+            }
 
             async function stim_next() {
                 idx_stim++;
@@ -151,7 +170,7 @@
 
 
 
-                file = `/things/images_THINGSplus-CC0/gt20lt60sdlt75-20251223/${String(stimuli[idx_stim]).padStart(3,0)}.jpg`;
+                file = `/pcsn/f26/stim/things-320-shine/${String(stimuli[idx_stim])}`;
                 dev_readout.innerText = stimuli[idx_stim];
                 log(`image:${stimuli[idx_stim]}`)
                 removeEventListener("keydown", listener_keydown);
@@ -224,7 +243,7 @@
                
                 const node = document.createElement('a');
                 node.href =  URL.createObjectURL(blob);
-                node.download = `PCRMNorm_${datalog.date.replaceAll(':', '').substring(0,17)}.json`;
+                node.download = `PCSNF26_Norm_${datalog.date.replaceAll(':', '').substring(0,17)}.json`;
                 node.display = 'none';
                 document.body.appendChild(node);
                 node.click();
@@ -262,7 +281,7 @@
                         break;
                     case 'h':
                         menus['sel'].innerText = "high confidence guess";
-                        stim_advance();
+                        stim_clear();
                         break;
                     case 'c':
                         menus['sel'].innerText = "abandoned guess";
@@ -287,9 +306,19 @@
                 stim_next();
             };
 
+            function shuffleArray(array) {
+                for (let i = array.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [array[i], array[j]] = [array[j], array[i]];
+                }
+            }
+
+
             addEventListener("DOMContentLoaded", function (ev) {
 
-                stimuli = stim_order(n_trials, Number(query.get('item') || 1));
+                stimuli = ["airboat.jpg","apple_tree.jpg","aquarium.jpg","artichoke.jpg","backgammon.jpg","badge.jpg","baklava.jpg","banana_peel.jpg","bank.jpg","basil.jpg","bathrobe.jpg","baton4.jpg","battery.jpg","bedpan.jpg","belt_buckle.jpg","belt.jpg","binoculars.jpg","birdbath.jpg","blinder.jpg","blower.jpg","board.jpg","bonnet.jpg","bookshelf.jpg","bow1.jpg","bow3.jpg","bowling_ball.jpg","brace.jpg","bracelet1.jpg","braid.jpg","branch.jpg","breadbox.jpg","bread.jpg","briefcase.jpg","broom.jpg","bumper.jpg","cabinet.jpg","camera2.jpg","cane.jpg","canister.jpg","canoe.jpg","canvas.jpg","carrot.jpg","cart.jpg","cashew.jpg","cash_register.jpg","cauliflower.jpg","cd_player.jpg","centerpiece.jpg","chalice.jpg","chalk.jpg","cheese.jpg","chicken_wire.jpg","chime.jpg","chimney.jpg","chip.jpg","chopsticks.jpg","chute.jpg","clam.jpg","clarinet.jpg","clay.jpg","cleat.jpg","clothesline.jpg","clothespin.jpg","coaster.jpg","cocktail.jpg","cocoon.jpg","coffee_filter.jpg","combination_lock.jpg","comb.jpg","comic_book.jpg","compass.jpg","copier.jpg","coverall.jpg","crate.jpg","crumb.jpg","cufflink.jpg","dashboard.jpg","defibrillator.jpg","dirt_bike.jpg","dishrag.jpg","dogfood.jpg","doily.jpg","dollhouse.jpg","doormat.jpg","doorstop.jpg","dough.jpg","dreidel.jpg","dresser.jpg","dress.jpg","drumstick.jpg","dumbbell.jpg","duster.jpg","earplug.jpg","elbow.jpg","engine.jpg","exhaust_pipe.jpg","fan.jpg","fast_food.jpg","fence.jpg","fingerprint.jpg","fire_hydrant.jpg","flagpole.jpg","flamingo.jpg","flashbulb.jpg","flipper.jpg","floss.jpg","fountain_pen.jpg","freezer.jpg","fungus.jpg","funnel.jpg","fur_coat.jpg","garbage_truck.jpg","gasket.jpg","gavel.jpg","gearshift.jpg","ginger.jpg","globe.jpg","go-kart.jpg","golf_cart.jpg","grain.jpg","granite.jpg","granola.jpg","grapevine.jpg","gravel.jpg","grill.jpg","guardrail.jpg","gum.jpg","gurney.jpg","hairdryer.jpg","hairnet.jpg","hard_disk.jpg","hatbox.jpg","hay.jpg","headlamp.jpg","highchair.jpg","honeypot.jpg","hook1.jpg","hot_tub.jpg","hula_hoop.jpg","inhaler.jpg","ironing_board.jpg","ivy.jpg","jacket.jpg","jar.jpg","jeans.jpg","juicer1.jpg","keg.jpg","ketchup.jpg","kettle.jpg","key.jpg","lamb_chop.jpg","lanyard.jpg","laundry_basket.jpg","leash.jpg","lectern.jpg","lego.jpg","lemon.jpg","licorice.jpg","lid.jpg","lifesaver.jpg","light_switch.jpg","log.jpg","loom.jpg","magnet.jpg","magnifier.jpg","magnifying_glass.jpg","match.jpg","microscope.jpg","modem.jpg","mold1.jpg","monkey.jpg","mouse2.jpg","mug.jpg","mullet.jpg","mushroom.jpg","mustard.jpg","nail_polish.jpg","napkin.jpg","napkin_ring.jpg","nightshirt.jpg","nightstand.jpg","noisemaker.jpg","okra.jpg","onion.jpg","otter.jpg","oven.jpg","pacifier.jpg","paddle.jpg","paint.jpg","paper_bag.jpg","paper_towel.jpg","paperweight.jpg","patch.jpg","patty.jpg","peanut.jpg","pecan.jpg","pedometer.jpg","peeler.jpg","pelican.jpg","penholder.jpg","pet_food.jpg","pill.jpg","pineapple.jpg","pine_needle.jpg","pita.jpg","pitcher.jpg","plastic_film.jpg","pogo_stick.jpg","polaroid.jpg","pole.jpg","poster.jpg","printer.jpg","prism.jpg","projector.jpg","pulpit.jpg","punching_bag.jpg","quesadilla.jpg","quiche.jpg","quill.jpg","raft.jpg","rain_gauge.jpg","ramp.jpg","ratchet.jpg","ravioli.jpg","rearview_mirror.jpg","reel.jpg","remote_control.jpg","retainer.jpg","rhubarb.jpg","rickshaw.jpg","riser.jpg","robe.jpg","rug.jpg","sail.jpg","sandbox.jpg","sandpaper.jpg","sardine.jpg","sauerkraut.jpg","saxophone.jpg","scaffold.jpg","scone.jpg","scooter.jpg","seesaw.jpg","shaving_cream.jpg","shawl.jpg","shell3.jpg","ship.jpg","shoehorn.jpg","shoelace.jpg","shoe_polish.jpg","shredder.jpg","sim_card.jpg","skewer.jpg","ski_boots.jpg","slingshot.jpg","slot.jpg","smoke_alarm.jpg","sock.jpg","soda_fountain.jpg","solar_panel.jpg","soup.jpg","spatula.jpg","speedometer.jpg","spout.jpg","springboard.jpg","squeegee.jpg","stamp2.jpg","station_wagon.jpg","statue.jpg","stem.jpg","stethoscope.jpg","stool.jpg","stopwatch.jpg","string_cheese.jpg","submarine.jpg","sunroof.jpg","surfboard.jpg","sweater.jpg","sweatsuit.jpg","swing.jpg","taffy.jpg","taillight.jpg","tambourine.jpg","tapestry.jpg","teapot.jpg","tennis_ball.jpg","thermometer.jpg","thermos.jpg","tile.jpg","tongs.jpg","touchpad.jpg","toy.jpg","traffic_light.jpg","trapdoor.jpg","tree_trunk.jpg","triangle.jpg","tripod.jpg","trunk.jpg","tupperware.jpg","turtleneck.jpg","tuxedo.jpg","typewriter.jpg","vegetable.jpg","velcro.jpg","vending_machine.jpg","videocassette.jpg","viewfinder.jpg","waffle_iron.jpg","walnut.jpg","washboard.jpg","water_filter.jpg","water_heater.jpg","wax.jpg","wax_paper.jpg","wick.jpg","wig.jpg","window.jpg","wire.jpg","yarn.jpg","yolk.jpg"];
+
+                shuffleArray(stimuli);
 
                 img_stim     = document.getElementById("stim");
 
@@ -298,7 +327,7 @@
                 menus['nam'] = document.getElementById("menu-name")
 
                 message_readout = document.getElementById("message");
-                message_readout.innerHTML= "<p>Read the task instructions, then place your hand over the f/g/h keys.</p><p>Press <u>f</u> to begin with the first image.</p>"
+                message_readout.innerHTML= "<p>On each image, continue pressing <b>f</b> until the earliest point you feel certain about the identity of the object.</p><p>When you feel certain, press <b>h</b> until the object is clear.</p><p>Mark images for manual review with <b>e</b>.</p><p>Please do this for 30 images and then email your results file, along with any comments about the images.</p>"
 
                 dev_readout  = document.getElementById("developer-image-idx");
                 
@@ -338,7 +367,7 @@
         <div class="developer-controls">
             Image <span id="developer-image-idx"></span>
             <button onclick="download()">Download Results</button>
-            <a href="mailto:mpascale@bu.edu?subject=pcrm_v0.1.2&body=Attach the JSON data file.">Email Your Results</a>
+            <a href="mailto:mpascale@bu.edu?subject=pcsnf26_cal_v0.1.2&body=Attach the JSON data file.">Email Your Results</a>
         </div>
     </body>
 </html>
