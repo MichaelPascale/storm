@@ -4,7 +4,7 @@
  * Copyright (c) 2026, Michael P. Pascale <mpascale@bu.edu>
  * SPDX-License-Identifier: MIT
  * 
- * Last modified: 2026-11-05
+ * Last modified: 2026-11-11
  */
 
 import {JsPsych, type TrialType} from "jspsych";
@@ -53,41 +53,44 @@ return [
      * Instructions
      */
     {
-        type: jsp_ins,
-        pages: storm_config.messages.instructions,
-        button_label_next: "Continue",
-        show_clickable_nav: true
+        timeline: [
+        {
+            type: jsp_ins,
+            pages: storm_config.messages.instructions,
+            button_label_next: "Continue",
+            show_clickable_nav: true
+        },
+        {
+            type: jsp_key,
+            stimulus: ()=>`<img src=\"${storm_config.url_stimuli.location + storm_config.url_stimuli.special[0]}\" style="width: 100mm; height: 100mm; filter: blur(5px);">`,
+            choices: "NO_KEYS",
+            trial_duration: storm_config.timing.stim
+        },
+        {
+            type: jsp_txt,
+            questions: [{
+                prompt: storm_config.messages.guess,
+                placeholder: "duck"
+            }]
+        },
+        {
+            type: jsp_vas,
+            stimulus: storm_config.messages.confidence,
+            slider_width: 300,
+            labels: ["0% Certain", "100% Certain"],
+            prompt: null,
+            slider_start: 50,
+            stimulus_duration: null,
+            trial_duration: storm_config.timing.resp2
+        },
+        {
+            type: jsp_key,
+            stimulus: ()=>`<img src=\"${storm_config.url_stimuli.location + storm_config.url_stimuli.special[1]}\" style="width: 100mm; height: 100mm;">`,
+            choices: "NO_KEYS",
+            trial_duration: 3000
+        }
+        ]
     },
-    {
-        type: jsp_key,
-        stimulus: ()=>`<img src=\"${storm_config.url_stim_demo[0]}\" style="width: 100mm; height: 100mm; filter: blur(5px);">`,
-        choices: "NO_KEYS",
-        trial_duration: storm_config.timing.stim
-    },
-    {
-        type: jsp_txt,
-        questions: [{
-            prompt: storm_config.messages.guess,
-            placeholder: "duck"
-        }]
-    },
-    {
-        type: jsp_vas,
-        stimulus: storm_config.messages.confidence,
-        slider_width: 300,
-        labels: ["0% Certain", "100% Certain"],
-        prompt: null,
-        slider_start: 50,
-        stimulus_duration: null,
-        trial_duration: storm_config.timing.resp2
-    },
-    {
-        type: jsp_key,
-        stimulus: ()=>`<img src=\"${storm_config.url_stim_demo[1]}\" style="width: 100mm; height: 100mm;">`,
-        choices: "NO_KEYS",
-        trial_duration: 3000
-    },
-
     /**************************************************************************
      * Main Experiment Trials
      */
@@ -95,8 +98,18 @@ return [
         timeline: [
             {
                 type: jsp_key,
-                // TODO: Randomize blur levels.
-                stimulus: ()=>`<img src=\"${storm_config.url_stimuli}${jsPsych.evaluateTimelineVariable("image_id")}\" style="width: 100mm; height: 100mm; filter: blur(5px);">`,
+                // TODO: Randomize blur levels.                
+                stimulus: ()=>{
+                    const id: string = jsPsych.evaluateTimelineVariable("image_uri");
+                    const blur: number = jsPsych.evaluateTimelineVariable("blur");
+                    const url = storm_config.url_stimuli.location +
+                        (id.indexOf("/") < 0 ? storm_config.url_stimuli.directories[0] + "/" + id : id);
+
+                    if (!PRODUCTION)
+                        console.log("image: " + id + ", blur: " + blur);
+
+                    return `<img src=\"${url}\" style="width: 100mm; height: 100mm; filter: blur(${blur}px);">`;
+                },
                 choices: "NO_KEYS",
                 trial_duration: storm_config.timing.stim
             },
@@ -122,7 +135,14 @@ return [
                 // opportunity to experience curiosity relief; potentially boosted
                 // engagement. We may also observe drift in confidence ratings if
                 // participants calibrate to this feedback.
-                stimulus: ()=>`<img src=\"${storm_config.url_stimuli2}${jsPsych.evaluateTimelineVariable("image_id")}\" style="width: 100mm; height: 100mm;">`,
+                stimulus: ()=>{
+                    let id: string = jsPsych.evaluateTimelineVariable("image_uri");
+                    if (id.indexOf("demo") == 0)
+                        id = id.replace("shine", "desat");
+                    const url = storm_config.url_stimuli.location +
+                        (id.indexOf("/") < 0 ? storm_config.url_stimuli.directories[1] + "/" + id : id);
+                    return `<img src=\"${url}\" style="width: 100mm; height: 100mm;">`;
+                },
                 choices: "NO_KEYS",
                 trial_duration: 3000
             },
