@@ -36,17 +36,19 @@ if (PRODUCTION) {
 
 const session_id = crypto.randomUUID();
 
+let time_trial_start: number;
+
 const jsPsych = initJsPsych({
-    on_trial_start: (data: any)=>{
-        data.time_trial_start=Date.now();
+    on_trial_start: ()=>{
+        time_trial_start=Date.now();
     },
     on_trial_finish: (data: any)=>{
+        data.time_trial_start = time_trial_start;
         data.time_trial_finish=Date.now();
     },
     on_finish: function() {
         if (storm_config.url_redirect)
             window.location.replace(storm_config.url_redirect + window.location.search)
-    },
     }
 });
 
