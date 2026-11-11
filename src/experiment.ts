@@ -10,7 +10,6 @@
 import {JsPsych, type TrialType} from "jspsych";
 import jsp_ins from '@jspsych/plugin-instructions';
 import jsp_txt from '@jspsych/plugin-survey-text';
-import jsp_img from '@jspsych/plugin-html-keyboard-response';
 import jsp_key from '@jspsych/plugin-html-keyboard-response';
 import jsp_vas from '@jspsych/plugin-html-slider-response';
 import storm_config from "./config.json" with {type: "json"};
@@ -28,7 +27,7 @@ export default function (jsPsych: JsPsych, params: URLSearchParams) {
         throw Error("Invalid orderfile.");
 
     // Assign trial variables according to randomization table.
-    let trial_variables: Array<{image_uri: string | undefined, blur: number | undefined}> = [];
+    let trial_variables: any[] = [];
 
     for (let i = 0; i < storm_stimuli.length; i++) {
             trial_variables.push({image_uri: storm_stimuli[i], blur: order[i]})
@@ -40,13 +39,34 @@ export default function (jsPsych: JsPsych, params: URLSearchParams) {
     // Limit the number of trials to that defined in the configuration file.
     // FIXME: This does not respect the randomization table.
     trial_variables = trial_variables.slice(0,storm_config.trials);
+    trial_variables = trial_variables.map((tvar, i)=>({...tvar, trialGroup: i}));
 
     // Insert attention checks at the 1/3 and 2/3 completion marks.
-    trial_variables.splice(Math.floor(storm_config.trials/3), 0, {image_uri: storm_config.url_stimuli.special[0], blur: 56})
-    trial_variables.splice(Math.floor(storm_config.trials*2/3), 0, {image_uri: storm_config.url_stimuli.special[0], blur: 0})
+    trial_variables.splice(Math.floor(storm_config.trials/3), 0, {image_uri: storm_config.url_stimuli.special[0], blur: 25, trialGroup: "attchk1"})
+    trial_variables.splice(Math.floor(storm_config.trials*2/3), 0, {image_uri: storm_config.url_stimuli.special[0], blur: 0, trialGroup: "attchk2"})
 
     if (!PRODUCTION)
         console.log(trial_variables);
+
+    const fixation = {
+        type: jsp_key,
+        stimulus: '<div style="font-size:10mm">+</div>',
+        choices: 'NO_KEYS',
+        trial_duration: storm_config.timing.fixation,
+        data: {
+            eventname: "fixation"
+        }
+    };
+
+    const onset_fixation = {
+        ...fixation,
+        on_finish: (data: any)=>{
+            data.stimfile = jsPsych.evaluateTimelineVariable("image_uri");
+            data.blur = jsPsych.evaluateTimelineVariable("blur");
+            data.trialGroup = jsPsych.evaluateTimelineVariable("trialGroup");
+            console.log(data);
+        }
+    }
 
 return [
     /**************************************************************************
@@ -60,6 +80,7 @@ return [
             button_label_next: "Continue",
             show_clickable_nav: true
         },
+        fixation,
         {
             type: jsp_key,
             stimulus: ()=>`<img src=\"${storm_config.url_stimuli.location + storm_config.url_stimuli.special[0]}\" style="width: 100mm; height: 100mm; filter: blur(5px);">`,
@@ -83,11 +104,14 @@ return [
             stimulus_duration: null,
             trial_duration: storm_config.timing.resp2
         },
+        fixation,
         {
             type: jsp_key,
             stimulus: ()=>`<img src=\"${storm_config.url_stimuli.location + storm_config.url_stimuli.special[1]}\" style="width: 100mm; height: 100mm;">`,
             choices: "NO_KEYS",
-            trial_duration: 3000
+            trial_duration: storm_config.timing.clear
+        },
+        fixation,
         }
         ]
     },
@@ -96,6 +120,7 @@ return [
      */
     {
         timeline: [
+            onset_fixation,
             {
                 type: jsp_key,
                 // TODO: Randomize blur levels.                
@@ -111,11 +136,17 @@ return [
                     return `<img src=\"${url}\" style="width: 100mm; height: 100mm; filter: blur(${blur}px);">`;
                 },
                 choices: "NO_KEYS",
-                trial_duration: storm_config.timing.stim
+                trial_duration: storm_config.timing.stim,
+                data: {
+                    eventname: "image",
+                }
             },
             {
                 type: jsp_txt,
-                questions: [{prompt: storm_config.messages.guess}]
+                questions: [{prompt: storm_config.messages.guess}],
+                data: {
+                    eventname: "guess",
+                }
             },
             {
                 type: jsp_vas,
@@ -125,7 +156,10 @@ return [
                 prompt: null,
                 slider_start: 50,
                 stimulus_duration: null,
-                trial_duration: storm_config.timing.resp2
+                trial_duration: storm_config.timing.resp2,
+                data: {
+                    eventname: "rate_confidence",
+                }
             },
             // TODO: Commit this section to another branch.
             {
@@ -144,8 +178,11 @@ return [
                     return `<img src=\"${url}\" style="width: 100mm; height: 100mm;">`;
                 },
                 choices: "NO_KEYS",
-                trial_duration: 3000
-            },
+                trial_duration: storm_config.timing.clear,
+                data: {
+                    eventname: "clear_image"
+                }
+            }
         ],
         timeline_variables: trial_variables
     }
