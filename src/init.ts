@@ -75,10 +75,16 @@ timeline.push({
     }
 });
 
+// Load the stimuli.
 timeline.push({ 
     type: jsp_preload, 
     // auto_preload: true,
-    images: storm_stimuli.map((x) => storm_config.url_stimuli + x),
+    images: [
+        storm_config.url_stimuli.directories.flat().map(dir=>storm_stimuli.map(
+            stim => storm_config.url_stimuli.location + dir + "/" + stim
+        )),
+        storm_config.url_stimuli.special.map(uri=>storm_config.url_stimuli.location + uri)
+    ].flat(),
     message: storm_config.messages.loading,
     show_progress_bar: true ,
     continue_after_error: false,

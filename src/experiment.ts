@@ -15,9 +15,39 @@ import jsp_key from '@jspsych/plugin-html-keyboard-response';
 import jsp_vas from '@jspsych/plugin-html-slider-response';
 import storm_config from "./config.json" with {type: "json"};
 import storm_stimuli from "./stimuli.json" with {type: "json"};
+import storm_order from "./order.json" with {type: "json"};
 
+export default function (jsPsych: JsPsych, params: URLSearchParams) {
 
-export default function (jsPsych: JsPsych) {
+    const order_index = Number.parseInt(params.get("ord") || "0");
+    if (order_index < 0 || order_index >= storm_order.length)
+        throw Error("Invalid participant.");
+
+    const order = storm_order[order_index]?.map((i)=>storm_config.random.blur[i-1]);
+    if (order == undefined || order.length != storm_stimuli.length)
+        throw Error("Invalid orderfile.");
+
+    // Assign trial variables according to randomization table.
+    let trial_variables: Array<{image_uri: string | undefined, blur: number | undefined}> = [];
+
+    for (let i = 0; i < storm_stimuli.length; i++) {
+            trial_variables.push({image_uri: storm_stimuli[i], blur: order[i]})
+    }
+
+    // Fully randomize the trial order.
+    trial_variables = jsPsych.randomization.shuffle(trial_variables);
+
+    // Limit the number of trials to that defined in the configuration file.
+    // FIXME: This does not respect the randomization table.
+    trial_variables = trial_variables.slice(0,storm_config.trials);
+
+    // Insert attention checks at the 1/3 and 2/3 completion marks.
+    trial_variables.splice(Math.floor(storm_config.trials/3), 0, {image_uri: storm_config.url_stimuli.special[0], blur: 56})
+    trial_variables.splice(Math.floor(storm_config.trials*2/3), 0, {image_uri: storm_config.url_stimuli.special[0], blur: 0})
+
+    if (!PRODUCTION)
+        console.log(trial_variables);
+
 return [
     /**************************************************************************
      * Instructions
@@ -97,11 +127,7 @@ return [
                 trial_duration: 3000
             },
         ],
-        timeline_variables: storm_stimuli.map((x)=>({image_id: x})),
-        sample: {
-            type: "with-replacement",
-            size: storm_config.trials
-        }
+        timeline_variables: trial_variables
     }
 ]
 };
