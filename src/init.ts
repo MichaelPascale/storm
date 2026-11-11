@@ -65,6 +65,8 @@ timeline.push({
 timeline.push({
     type: jsp_browser,
     inclusion_function: (detected: any) => {
+        if (params.has("ignorechecks"))
+            return true;
         return ['chrome', 'firefox'].includes(detected.browser) && !detected.mobile;
     },
     exclusion_message: (detected: any) => {
