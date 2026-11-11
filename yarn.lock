@@ -627,6 +627,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@jspsych/extension-webgazer@npm:^1.2.0":
+  version: 1.2.0
+  resolution: "@jspsych/extension-webgazer@npm:1.2.0"
+  peerDependencies:
+    jspsych: ">=7.0.0"
+  checksum: 10c0/506196160bc42ea5e0aafdfa82e9c29684a6985988d4a41d031c740b2c4e2200bdacd990ce79ccd19652a1bf584e0c0dea8a112b80688d9efa96097426fdbf3f
+  languageName: node
+  linkType: hard
+
 "@jspsych/plugin-browser-check@npm:^2.1.0":
   version: 2.1.0
   resolution: "@jspsych/plugin-browser-check@npm:2.1.0"
@@ -707,6 +716,36 @@ __metadata:
   peerDependencies:
     jspsych: ">=7.1.0"
   checksum: 10c0/c81e26a325dd08c15a70d1b361d148c277b217470874d157a50a49cc7b5d701f08dc7b19a5f36dd0409d21db9487400dbf00a39e3baab92d8e2d73848f00dce7
+  languageName: node
+  linkType: hard
+
+"@jspsych/plugin-webgazer-calibrate@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "@jspsych/plugin-webgazer-calibrate@npm:2.1.0"
+  peerDependencies:
+    "@jspsych/extension-webgazer": ">=1.0.0"
+    jspsych: ">=7.0.0"
+  checksum: 10c0/66ff70a71eb225d03e8cd2a86a500304333695a2ff2ec0e3f4b31ca3a3d2f76b3f7fe333f71d45b3cb2dfb502e433c001f32359aefa8615a55db88aeb82aca83
+  languageName: node
+  linkType: hard
+
+"@jspsych/plugin-webgazer-init-camera@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "@jspsych/plugin-webgazer-init-camera@npm:2.1.0"
+  peerDependencies:
+    "@jspsych/extension-webgazer": ">=1.0.0"
+    jspsych: ">=7.0.0"
+  checksum: 10c0/2422875feb1759b9662b47249f38c6700f0cc7a12c123d6f333e5f620e719654031dc744045c117682d25041f0d5ccd6a3cab29f38fcab09d1a3c09d64a285c9
+  languageName: node
+  linkType: hard
+
+"@jspsych/plugin-webgazer-validate@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "@jspsych/plugin-webgazer-validate@npm:2.1.0"
+  peerDependencies:
+    "@jspsych/extension-webgazer": ">=1.0.0"
+    jspsych: ">=7.0.0"
+  checksum: 10c0/a9bd34bb357f1b98a0485fb9ec4df667a7d6418a147c23ebe7b4e34a0a17a9f48e24a398d3a2815c8b757d20012f59f2f40200f81b7c32757ea32174e50bef77
   languageName: node
   linkType: hard
 
@@ -3861,6 +3900,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "storm@workspace:."
   dependencies:
+    "@jspsych/extension-webgazer": "npm:^1.2.0"
     "@jspsych/plugin-browser-check": "npm:^2.1.0"
     "@jspsych/plugin-call-function": "npm:^2.1.0"
     "@jspsych/plugin-fullscreen": "npm:^2.1.0"
@@ -3870,6 +3910,9 @@ __metadata:
     "@jspsych/plugin-instructions": "npm:^2.1.0"
     "@jspsych/plugin-preload": "npm:^2.1.0"
     "@jspsych/plugin-survey-text": "npm:^2.1.1"
+    "@jspsych/plugin-webgazer-calibrate": "npm:^2.1.0"
+    "@jspsych/plugin-webgazer-init-camera": "npm:^2.1.0"
+    "@jspsych/plugin-webgazer-validate": "npm:^2.1.0"
     "@types/node": "npm:^26.6.5"
     eslint: "npm:^10.13.0"
     html-webpack-plugin: "npm:^5.6.8"

@@ -12,6 +12,12 @@ import jsp_browser from '@jspsych/plugin-browser-check';
 import jsp_preload from '@jspsych/plugin-preload';
 import jsp_fullscr from '@jspsych/plugin-fullscreen';
 import jsp_callfn  from '@jspsych/plugin-call-function';
+import jsp_webgazer_extension from '@jspsych/extension-webgazer';
+import jsp_webgazer_init from '@jspsych/plugin-webgazer-init-camera';
+import jsp_webgazer_cal from '@jspsych/plugin-webgazer-calibrate';
+import jsp_webgazer_val from '@jspsych/plugin-webgazer-validate';
+// import { storm_error } from './error';
+
 
 import storm_config from "./config.json" with {type: "json"};
 import storm_stimuli from "./stimuli.json" with {type: "json"};
@@ -20,8 +26,21 @@ import storm_experiment from './experiment';
 import jsp_plugin_ident from './plugins/ident';
 
 console.log(BUILD);
+
 document.title = storm_config.webtitle ?? storm_config.name;
+
 const params = new URLSearchParams(window.location.search);
+
+// if (!params.has("ord"))
+//     alert("ERRROR")
+// else
+// var d: number = parseInt(params.get("ord"));
+// params.getAll("");
+
+window.addEventListener("error", (event) => {
+    alert(storm_config.messages.error);
+    return true;
+});
 
 if (PRODUCTION) {
     // Prevent access on non-HTTPS connections, and ensure crypto is available.
@@ -36,7 +55,23 @@ if (PRODUCTION) {
 
 const session_id = crypto.randomUUID();
 
+// Once the experiment has begun, track the number of times the user leaves
+// the fullscreen window or the window loses focus.
+let lostFocusCounter = 0;
+
 const jsPsych = initJsPsych({
+    extensions: [
+        {type: jsp_webgazer_extension}
+    ],
+    // on_interaction_data_update: function(data: any) {
+    //     console.log(data)
+    //     if (data.event == 'blur' || data.event == 'fullscreenexit') {
+    //         lostFocusCounter++;
+
+    //         if (lostFocusCounter == 3)
+    //             alert("The app has not remained fullscreen. This may cause data quality issues.")
+    //     }
+    // }
     on_trial_start: (data: any)=>{
         data.time_trial_start=Date.now();
     },
@@ -46,10 +81,8 @@ const jsPsych = initJsPsych({
     on_finish: function() {
         if (storm_config.url_redirect)
             window.location.replace(storm_config.url_redirect + window.location.search)
-    },
     }
 });
-
 
 const timeline: any[] = [];
 
@@ -101,6 +134,25 @@ if (PRODUCTION) {
         button_label: "Begin Experiment",
         delay_after: 1500
     });
+}
+
+// Enable webgazer if it is requested in the query and required in the config.
+if (params.has("webgazer")) {
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    if (devices.find(device => device.kind == "videoinput")) {
+        timeline.push(
+            {type: jsp_webgazer_init},
+            {type: jsp_webgazer_cal},
+            {
+                type: jsp_webgazer_val,
+                validation_points: [[-200, 200], [200, 200], [-200, -200], [200, -200]],
+                validation_point_coordinates: 'center-offset-pixels',
+                roi_radius: 100
+            }
+        );
+    } else if (storm_config.require.webcam) {
+        throw Error(storm_config.messages.exclude_camera);
+    }
 }
 
 // All checks have passed. Save the data collected in the initialization trails.
