@@ -68,6 +68,15 @@ export default function (jsPsych: JsPsych, params: URLSearchParams) {
         }
     }
 
+    // Modify the slider input to display the current value.
+    function vasInputUpdate() {
+        const input = document.getElementById("jspsych-html-slider-response-response") as HTMLInputElement;
+        const label = document.createElement("span");
+        label.innerText = "0%";
+        input?.parentElement?.appendChild(label);
+        input?.addEventListener("input", () => { label.innerText = `${input?.value}%` })
+    }
+
 return [
     /**************************************************************************
      * Instructions
@@ -100,9 +109,9 @@ return [
             slider_width: 300,
             labels: ["0% Certain", "100% Certain"],
             prompt: null,
-            slider_start: 50,
+            slider_start: 0,
             stimulus_duration: null,
-            trial_duration: storm_config.timing.resp2
+            on_load: vasInputUpdate
         },
         fixation,
         {
@@ -157,6 +166,7 @@ return [
                 slider_start: 50,
                 stimulus_duration: null,
                 trial_duration: storm_config.timing.resp2,
+                onload: vasInputUpdate,
                 data: {
                     eventname: "rate_confidence",
                 }
