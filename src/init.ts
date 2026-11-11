@@ -4,7 +4,7 @@
  * Copyright (c) 2026, Michael P. Pascale <mpascale@bu.edu>
  * SPDX-License-Identifier: MIT
  * 
- * Last modified: 2026-11-05
+ * Last modified: 2026-11-11
  */
 
 import {initJsPsych} from 'jspsych';
@@ -17,6 +17,7 @@ import storm_config from "./config.json" with {type: "json"};
 import storm_stimuli from "./stimuli.json" with {type: "json"};
 import {storm_save} from "./data";
 import storm_experiment from './experiment';
+import jsp_plugin_ident from './plugins/ident';
 
 console.log(BUILD);
 document.title = storm_config.webtitle ?? storm_config.name;
@@ -51,6 +52,14 @@ const jsPsych = initJsPsych({
 
 
 const timeline: any[] = [];
+
+// Record session information.
+timeline.push({
+    type: jsp_plugin_ident,
+    session: session_id,
+    date: () => jsPsych.getStartTime().toISOString(),
+    experiment: storm_config
+});
 
 // Verify that the participant is using a compatible device and browser.
 timeline.push({
