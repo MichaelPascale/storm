@@ -638,6 +638,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@jspsych/plugin-call-function@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "@jspsych/plugin-call-function@npm:2.1.0"
+  peerDependencies:
+    jspsych: ">=7.1.0"
+  checksum: 10c0/bb48e09ad8709ebf840fa0a446ae78062548142a965491b28944e79bba99ee39d289b4877b91be1394fdf59c0e5f104e4722816097b4177ca54730b49dc6d78d
+  languageName: node
+  linkType: hard
+
 "@jspsych/plugin-fullscreen@npm:^2.1.0":
   version: 2.1.0
   resolution: "@jspsych/plugin-fullscreen@npm:2.1.0"
@@ -3853,6 +3862,7 @@ __metadata:
   resolution: "storm@workspace:."
   dependencies:
     "@jspsych/plugin-browser-check": "npm:^2.1.0"
+    "@jspsych/plugin-call-function": "npm:^2.1.0"
     "@jspsych/plugin-fullscreen": "npm:^2.1.0"
     "@jspsych/plugin-html-keyboard-response": "npm:^2.2.0"
     "@jspsych/plugin-html-slider-response": "npm:^2.1.0"

@@ -11,18 +11,16 @@ import {initJsPsych} from 'jspsych';
 import jsp_browser from '@jspsych/plugin-browser-check';
 import jsp_preload from '@jspsych/plugin-preload';
 import jsp_fullscr from '@jspsych/plugin-fullscreen';
-import jsp_ins from '@jspsych/plugin-instructions';
-import jsp_txt from '@jspsych/plugin-survey-text';
-import jsp_img from '@jspsych/plugin-html-keyboard-response';
-import jsp_key from '@jspsych/plugin-html-keyboard-response';
-import jsp_vas from '@jspsych/plugin-html-slider-response';
+import jsp_callfn  from '@jspsych/plugin-call-function';
 
 import storm_config from "./config.json" with {type: "json"};
 import storm_stimuli from "./stimuli.json" with {type: "json"};
-import experiment from './experiment';
+import {storm_save} from "./data";
+import storm_experiment from './experiment';
 
 console.log(BUILD);
 document.title = storm_config.webtitle ?? storm_config.name;
+const params = new URLSearchParams(window.location.search);
 
 if (PRODUCTION) {
     // Prevent access on non-HTTPS connections, and ensure crypto is available.
@@ -35,18 +33,14 @@ if (PRODUCTION) {
     });
 }
 
+const session_id = crypto.randomUUID();
+
 const jsPsych = initJsPsych({
-    on_trial_finish: function(data: any) {
-        var xhr = new XMLHttpRequest();
-        xhr.open('POST', 'http://localhost:8000/save_file.php');
-        xhr.setRequestHeader('Content-Type', 'application/json');
-        xhr.onload = function() {
-            if(xhr.status != 200){
-                data.displayData();
-            }
-        };
-        xhr.send(JSON.stringify({item: "trials", filedata: jsPsych.data.get().csv()}));
-        //xhr.send(JSON.stringify({item: "interactions", filedata: jsPsych.data.getInteractionData().csv()}));
+    on_trial_start: (data: any)=>{
+        data.time_trial_start=Date.now();
+    },
+    on_trial_finish: (data: any)=>{
+        data.time_trial_finish=Date.now();
     },
     on_finish: function() {
         if (storm_config.url_redirect)
@@ -58,6 +52,7 @@ const jsPsych = initJsPsych({
 
 const timeline: any[] = [];
 
+// Verify that the participant is using a compatible device and browser.
 timeline.push({
     type: jsp_browser,
     inclusion_function: (detected: any) => {
@@ -82,6 +77,7 @@ timeline.push({
     error_message: storm_config.messages.error
 } )
 
+// Enter fullscreen.
 if (PRODUCTION) {
     timeline.push({
         type: jsp_fullscr,
@@ -92,9 +88,35 @@ if (PRODUCTION) {
     });
 }
 
-timeline.push(experiment(jsPsych));
+// All checks have passed. Save the data collected in the initialization trails.
+timeline.push({
+    type: jsp_callfn,
+    async: true,
+    func: (done: Function) => {
+        storm_save(jsPsych.data.get(), `${session_id}-session`, "json", params.has("local"), done)
+    }
+});
+
+const experiment_timeline: any[] = storm_experiment(jsPsych, params);
+experiment_timeline.push({
+    type: jsp_callfn,
+    async: true,
+    func: (done: Function) => {
+        storm_save(jsPsych.data.getLastTimelineData(), `${session_id}-data`, "csv", params.has("local"), done)
+    }
+})
+
+timeline.push(experiment_timeline);
 
 if (PRODUCTION)
     timeline.push({type: jsp_fullscr, fullscreen_mode: false});
+
+timeline.push({
+    type: jsp_callfn,
+    async: true,
+    func: (done: Function) => {
+        storm_save(jsPsych.data.getInteractionData(), `${session_id}-interactions`, "csv", params.has("local"), done)
+    }
+});
 
 jsPsych.run(timeline);
