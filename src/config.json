@@ -1,11 +1,12 @@
 {
     "name": "DEMOEXP",
     "webtitle": "Research Study",
-    "url_post": "/upload.php",
-    "url_stimuli": "/assets/stimuli/",
-    "url_stim_demo": [
-        "/assets/stimuli/demo.jpg"
-    ],
+    "url_post": null,
+    "url_stimuli": {
+        "location": "/assets/stimuli/",
+        "directories": ["shine","desat"],
+        "special": ["demo/demo-shine.jpg", "demo/demo-desat.jpg"]
+    },
     "url_redirect": null,
     "trials": 40,
     "messages": {
@@ -27,5 +28,8 @@
         "stim":  10000,
         "resp1": 10000,
         "resp2": 10000
+    },
+    "random": {
+        "blur": [2, 2.639016, 3.482202, 4.594793, 6.062866, 8]
     }
 }
