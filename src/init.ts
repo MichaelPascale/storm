@@ -57,7 +57,6 @@ const jsPsych = initJsPsych({
     }
 });
 
-
 const timeline: any[] = [];
 
 // Record session information.
@@ -65,7 +64,8 @@ timeline.push({
     type: jsp_plugin_ident,
     session: session_id,
     date: () => jsPsych.getStartTime().toISOString(),
-    experiment: storm_config
+    experiment: storm_config,
+    stimuli: storm_stimuli
 });
 
 // Verify that the participant is using a compatible device and browser.

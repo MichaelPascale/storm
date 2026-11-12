@@ -5,7 +5,7 @@
  * Copyright (c) 2026, Michael P. Pascale <mpascale@bu.edu>
  * SPDX-License-Identifier: MIT
  * 
- * Last modified: 2026-11-11
+ * Last modified: 2026-11-12
  */
 
 import { JsPsych, type JsPsychPlugin, ParameterType, type TrialType } from "jspsych";
@@ -27,6 +27,10 @@ const info = <const>{
         default: window.location.search
     },
     experiment: {
+        type: ParameterType.OBJECT,
+        default: null
+    },
+    stimuli: {
         type: ParameterType.OBJECT,
         default: null
     }
@@ -85,6 +89,9 @@ const info = <const>{
     },
     experiment: {
         type: ParameterType.OBJECT
+    },
+    stimuli: {
+        type: ParameterType.OBJECT
     }
   }
 };
@@ -97,8 +104,6 @@ class jsp_plugin_ident implements JsPsychPlugin<Info> {
   constructor(private jsPsych: JsPsych) {}
 
   trial(display_element: HTMLElement, trial: TrialType<Info>) {
-
-    console.log(trial.experiment)
 
     const data = {
         build: BUILD,
@@ -118,7 +123,8 @@ class jsp_plugin_ident implements JsPsychPlugin<Info> {
         windowInnerHeightPx: window.innerHeight,
         colorDepth: window.screen.colorDepth,
         screenOrientation: window.screen.orientation.type,
-        experiment: trial.experiment
+        experiment: trial.experiment,
+        stimuli: trial.stimuli
     };
 
     this.jsPsych.finishTrial(data);
