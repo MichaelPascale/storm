@@ -5,27 +5,39 @@
  * Copyright (c) 2026, Michael P. Pascale <mpascale@bu.edu>
  * SPDX-License-Identifier: MIT
  * 
- * Last modified: 2026-11-11
+ * Last modified: 2026-11-12
  */
 
 import type { DataCollection } from "jspsych";
 import storm_config from "./config.json" with {type: "json"};
 
-function storm_save(data: DataCollection, name: string, type: "csv" | "json" = "csv", local: boolean = false, callback: Function | null) {
+function storm_save(data: DataCollection, name: string, type: "csv" | "json" = "csv", mode: string = "post", callback: Function | null) {
 
-    if (local || !storm_config.url_post) {
+    if (mode == "log") {
+        console.log("Data saved to \"" + name + "\": " + data.json(true));
+        if (callback)
+            callback();
+        return;
+    }
+
+    if (mode == "local" || !storm_config.url_post) {
         data.localSave(type, name + "." + type);
         if (callback)
             callback();
         return;
     }
 
-    http(
-        PRODUCTION ? storm_config.url_post : 'http://localhost:8000/save_file.php', 
-        {item: name, type: type, filedata: data},
-        undefined,
-        callback
-    );
+    if (mode == "post") {
+        http(
+            PRODUCTION ? storm_config.url_post : 'http://localhost:8000/save_file.php', 
+            {item: name, type: type, filedata: data},
+            undefined,
+            callback
+        );
+        return;
+    }
+
+    throw Error("Data could not be saved. Invalid save method.")
 }
 
 function http(url: URL|string, content: any, method: "GET"|"POST" = "POST", callback: Function | null = null) {

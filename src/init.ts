@@ -4,7 +4,7 @@
  * Copyright (c) 2026, Michael P. Pascale <mpascale@bu.edu>
  * SPDX-License-Identifier: MIT
  * 
- * Last modified: 2026-11-11
+ * Last modified: 2026-11-12
  */
 
 import {initJsPsych} from 'jspsych';
@@ -21,7 +21,9 @@ import jsp_plugin_ident from './plugins/ident';
 
 console.log(BUILD);
 document.title = storm_config.webtitle ?? storm_config.name;
+
 const params = new URLSearchParams(window.location.search);
+const savemode = params.get("save") || "post"
 
 if (PRODUCTION) {
     // Prevent access on non-HTTPS connections, and ensure crypto is available.
@@ -112,16 +114,19 @@ timeline.push({
     type: jsp_callfn,
     async: true,
     func: (done: Function) => {
-        storm_save(jsPsych.data.get(), `${session_id}-session`, "json", params.has("local"), done)
+        storm_save(jsPsych.data.get(), `${session_id}-session`, "json", savemode, done)
     }
 });
 
+// The main experiment timeline.
 const experiment_timeline: any[] = storm_experiment(jsPsych, params);
+
+// At the end of the experiment timeline, collect just that timeline's data as a CSV.
 experiment_timeline.push({
     type: jsp_callfn,
     async: true,
     func: (done: Function) => {
-        storm_save(jsPsych.data.getLastTimelineData(), `${session_id}-data`, "csv", params.has("local"), done)
+        storm_save(jsPsych.data.getLastTimelineData(), `${session_id}-data`, "csv", savemode, done)
     }
 })
 
@@ -134,7 +139,7 @@ timeline.push({
     type: jsp_callfn,
     async: true,
     func: (done: Function) => {
-        storm_save(jsPsych.data.getInteractionData(), `${session_id}-interactions`, "csv", params.has("local"), done)
+        storm_save(jsPsych.data.getInteractionData(), `${session_id}-interactions`, "csv", savemode, done)
     }
 });
 
