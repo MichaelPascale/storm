@@ -192,7 +192,7 @@ class jsp_plugin_rate implements JsPsychPlugin<Info> {
       // measure response time
       var endTime = performance.now();
       response.rt = Math.round(endTime - startTime);
-      slider.valueAsNumber;
+      response.response = slider.valueAsNumber;
 
       if (trial.response_ends_trial) {
         end_trial();
