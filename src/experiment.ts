@@ -12,6 +12,8 @@ import jsp_ins from '@jspsych/plugin-instructions';
 import jsp_txt from '@jspsych/plugin-survey-text';
 import jsp_key from '@jspsych/plugin-html-keyboard-response';
 import jsp_vas from '@jspsych/plugin-html-slider-response';
+import jsp_plugin_rate from "./plugins/rate";
+
 import storm_config from "./config.json" with {type: "json"};
 import storm_stimuli from "./stimuli.json" with {type: "json"};
 import storm_order from "./order.json" with {type: "json"};

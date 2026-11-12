@@ -1,5 +1,10 @@
 /* rate.ts
- * Modification of the slider plugin to change the stimulus after responding.
+ * Modification of the slider plugin. Initially the stimulus is hidden, until the
+ * participant responds. Then the stimulus is displayed for an interval or until
+ * they click to continue.
+ * 
+ * Copyright (c) 2026, Michael P. Pascale <mpascale@bu.edu>
+ * SPDX-License-Identifier: MIT
  * 
  * Derived from jsPsych/packages/plugin-html-slider-response/src/index.ts
  * Copyright (c) 2014-2022 Joshua R. de Leeuw 
@@ -10,11 +15,9 @@
 
 import { JsPsych, type JsPsychPlugin, ParameterType, type TrialType } from "jspsych";
 
-import { version } from "../../package.json";
-
 const info = <const>{
   name: "plugin-rate",
-  version: version,
+  version: VERSION,
   parameters: {
     stimulus: {
       type: ParameterType.HTML_STRING,
@@ -92,95 +95,86 @@ type Info = typeof info;
 class jsp_plugin_rate implements JsPsychPlugin<Info> {
   static info = info;
 
-  constructor(private jsPsych: JsPsych) {}
+  constructor(private jsPsych: JsPsych) { }
 
   trial(display_element: HTMLElement, trial: TrialType<Info>) {
     // half of the thumb width value from jspsych.css, used to adjust the label positions
     var half_thumb_width = 7.5;
 
-    var html = '<div id="jspsych-html-slider-response-wrapper" style="margin: 100px 0px;">';
-    html += '<div id="jspsych-html-slider-response-stimulus">' + trial.stimulus + "</div>";
-    html +=
-      '<div class="jspsych-html-slider-response-container" style="position:relative; margin: 0 auto 3em auto; ';
-    if (trial.slider_width !== null) {
-      html += "width:" + trial.slider_width + "px;";
-    } else {
-      html += "width:auto;";
-    }
-    html += '">';
-    html +=
-      '<input type="range" class="jspsych-slider" value="' +
-      trial.slider_start +
-      '" min="' +
-      trial.min +
-      '" max="' +
-      trial.max +
-      '" step="' +
-      trial.step +
-      '" id="jspsych-html-slider-response-response"></input>';
-    html += "<div>";
-    for (var j = 0; j < trial.labels.length; j++) {
-      var label_width_perc = 100 / (trial.labels.length - 1);
-      var percent_of_range = j * (100 / (trial.labels.length - 1));
-      var percent_dist_from_center = ((percent_of_range - 50) / 50) * 100;
-      var offset = (percent_dist_from_center * half_thumb_width) / 100;
-      html +=
-        '<div style="border: 1px solid transparent; display: inline-block; position: absolute; ' +
-        "left:calc(" +
-        percent_of_range +
-        "% - (" +
-        label_width_perc +
-        "% / 2) - " +
-        offset +
-        "px); text-align: center; width: " +
-        label_width_perc +
-        '%;">';
-      html += '<span style="text-align: center; font-size: 80%;">' + trial.labels[j] + "</span>";
-      html += "</div>";
-    }
-    html += "</div>";
-    html += "</div>";
-    html += "</div>";
+    const wrapper = document.createElement("div");
+    wrapper.id = "jspsych-html-slider-response-wrapper";
+    wrapper.style = "margin: 3em 0px;";
 
-    if (trial.prompt !== null) {
-      html += trial.prompt;
+    const stimulus = document.createElement("div");
+    stimulus.id = "jspsych-html-slider-response-stimulus";
+    stimulus.innerHTML = "<div class=\"storm_box\"><span>?</span></div>"
+    stimulus.style = "margin: 3em;"
+
+    const container = document.createElement("div");
+    container.classList.add("jspsych-html-slider-response-container");
+    container.style = "position:relative; margin: 0 auto 3em auto; width: 100mm";
+
+    const slider = document.createElement("input");
+    slider.id = "jspsych-html-slider-response-response";
+    slider.classList.add("jspsych-slider");
+    slider.type = "range";
+    slider.value = trial.slider_start?.toString() || "0";
+    slider.min = trial.min?.toString() || "0";
+    slider.max = trial.max?.toString() || "100";
+    slider.step = trial.step?.toString() || "1";
+
+    const labels = document.createElement("div");
+    if (trial.labels) {
+      for (let i = 0; i < trial.labels.length; i++) {
+        const label_width_perc = 100 / (trial.labels.length - 1);
+        const percent_of_range = i * (100 / (trial.labels.length - 1));
+        const percent_dist_from_center = ((percent_of_range - 50) / 50) * 100;
+        const offset = (percent_dist_from_center * half_thumb_width) / 100;
+
+        const el = document.createElement("div");
+        el.style = "border: 1px solid transparent; display: inline-block; position: absolute; " +
+          `left:calc(${percent_of_range}% - (${label_width_perc}% / 2) - ${offset}px);` +
+          `text-align: center; width: ${label_width_perc}%;`;
+
+
+        el.innerHTML = "<span style=\"text-align: center; font-size: 80%;\">" + trial.labels[i] + "</span>";
+        labels.appendChild(el);
+      }
     }
 
-    add submit button
-    html +=
-      '<button id="jspsych-html-slider-response-next" class="jspsych-btn" ' +
-      (trial.require_movement ? "disabled" : "") +
-      ">" +
-      trial.button_label +
-      "</button>";
+    if (trial.prompt) {
+      const prompt = document.createElement("div");
+      prompt.innerHTML = trial.prompt
+      wrapper.appendChild(prompt);
+    }
 
-    display_element.innerHTML = html;
+    wrapper.appendChild(container);
+    container.appendChild(slider);
+    container.appendChild(labels);
+    wrapper.appendChild(stimulus);
 
-    var response = {
-      rt: null,
-      response: null,
+    const button = document.createElement("button");
+    button.id = "jspsych-html-slider-response-next";
+    button.classList.add("jspsych-btn");
+    if (trial.require_movement)
+      button.disabled = true;
+    button.innerHTML = trial.button_label || "";
+
+    display_element.appendChild(wrapper);
+    display_element.appendChild(button);
+
+    const response = {
+      rt: NaN,
+      response: NaN,
     };
 
     if (trial.require_movement) {
-      const enable_button = () => {
-        display_element.querySelector<HTMLInputElement>(
-          "#jspsych-html-slider-response-next"
-        ).disabled = false;
-      };
-
-      display_element
-        .querySelector("#jspsych-html-slider-response-response")
-        .addEventListener("mousedown", enable_button);
-
-      display_element
-        .querySelector("#jspsych-html-slider-response-response")
-        .addEventListener("touchstart", enable_button);
-
-      display_element
-        .querySelector("#jspsych-html-slider-response-response")
-        .addEventListener("change", enable_button);
+      const enable_button = () => { button.disabled = false; };
+      slider.addEventListener("mousedown", enable_button);
+      slider.addEventListener("touchstart", enable_button);
+      slider.addEventListener("change", enable_button);
     }
-    
+
     const end_trial = () => {
       // save data
       var trialdata = {
@@ -194,35 +188,27 @@ class jsp_plugin_rate implements JsPsychPlugin<Info> {
       this.jsPsych.finishTrial(trialdata);
     };
 
-    display_element
-      .querySelector("#jspsych-html-slider-response-next")
-      .addEventListener("click", () => {
-        // measure response time
-        var endTime = performance.now();
-        response.rt = Math.round(endTime - startTime);
-        response.response = display_element.querySelector<HTMLInputElement>(
-          "#jspsych-html-slider-response-response"
-        ).valueAsNumber;
+    button.addEventListener("click", () => {
+      // measure response time
+      var endTime = performance.now();
+      response.rt = Math.round(endTime - startTime);
+      slider.valueAsNumber;
 
-        if (trial.response_ends_trial) {
-          end_trial();
-        } else {
-          display_element.querySelector<HTMLButtonElement>(
-            "#jspsych-html-slider-response-next"
-          ).disabled = true;
-        }
-      });
+      if (trial.response_ends_trial) {
+        end_trial();
+      } else {
+        button.disabled = true;
+      }
+    });
 
-    if (trial.stimulus_duration !== null) {
+    if (typeof trial.stimulus_duration === "number") {
       this.jsPsych.pluginAPI.setTimeout(() => {
-        display_element.querySelector<HTMLElement>(
-          "#jspsych-html-slider-response-stimulus"
-        ).style.visibility = "hidden";
+        stimulus.style.visibility = "hidden";
       }, trial.stimulus_duration);
     }
 
     // end trial if trial_duration is set
-    if (trial.trial_duration !== null) {
+    if (typeof trial.trial_duration === "number") {
       this.jsPsych.pluginAPI.setTimeout(end_trial, trial.trial_duration);
     }
 
