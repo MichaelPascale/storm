@@ -12,6 +12,7 @@ import jsp_browser from '@jspsych/plugin-browser-check';
 import jsp_preload from '@jspsych/plugin-preload';
 import jsp_fullscr from '@jspsych/plugin-fullscreen';
 import jsp_callfn  from '@jspsych/plugin-call-function';
+import jsp_html from '@jspsych/plugin-html-keyboard-response';
 
 import storm_config from "./config.json" with {type: "json"};
 import storm_stimuli from "./stimuli.json" with {type: "json"};
@@ -36,13 +37,15 @@ if (PRODUCTION) {
     });
 }
 
+// A random unique identifier for this session to be stored with data files.
 const session_id = crypto.randomUUID();
 
+// Global variable to track the most recent trial start. See below.
 let time_trial_start: number;
 
 const jsPsych = initJsPsych({
     on_trial_start: ()=>{
-        time_trial_start=Date.now();
+        time_trial_start=Date.now(); // NOTE: Data property does not exist at trial_start.
     },
     on_trial_finish: (data: any)=>{
         data.time_trial_start = time_trial_start;
@@ -84,7 +87,7 @@ timeline.push({
 // Load the stimuli.
 timeline.push({ 
     type: jsp_preload, 
-    // auto_preload: true,
+    // auto_preload: true, // Not using image plugin, so must list images used in html blocks.
     images: [
         storm_config.url_stimuli.directories.flat().map(dir=>storm_stimuli.map(
             stim => storm_config.url_stimuli.location + dir + "/" + stim
@@ -141,6 +144,12 @@ timeline.push({
     func: (done: Function) => {
         storm_save(jsPsych.data.getInteractionData(), `${session_id}-interactions`, "csv", savemode, done)
     }
+});
+
+timeline.push({
+    type: jsp_html,
+    stimulus: storm_config.messages.completion,
+    choices: 'NO_KEYS'
 });
 
 jsPsych.run(timeline);
