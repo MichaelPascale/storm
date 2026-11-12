@@ -4,7 +4,7 @@
  * Copyright (c) 2026, Michael P. Pascale <mpascale@bu.edu>
  * SPDX-License-Identifier: MIT
  * 
- * Last modified: 2026-11-11
+ * Last modified: 2026-11-12
  */
 
 import {JsPsych, type TrialType} from "jspsych";
@@ -64,12 +64,26 @@ export default function (jsPsych: JsPsych, params: URLSearchParams) {
             data.stimfile = jsPsych.evaluateTimelineVariable("image_uri");
             data.blur = jsPsych.evaluateTimelineVariable("blur");
             data.trialGroup = jsPsych.evaluateTimelineVariable("trialGroup");
-            console.log(data);
         }
     }
 
+
+    // NOTE: This section is handling various limitations of jsPsych by adding to
+    // the HTML elements when the on_load event is called. Might consider rewrite
+    // in a more flexible framework or plain JS.
+
+    // Modify the instruction screens with a delay before the next button becomes available.
+    function modInstrDelay() {
+        if (!PRODUCTION)
+            return;
+
+        const button = document.getElementById("jspsych-instructions-next") as HTMLButtonElement;
+        button.disabled = true;
+        jsPsych.pluginAPI.setTimeout(()=>{button.disabled = false;}, storm_config.timing.instr);
+    }
+
     // Modify the slider input to display the current value.
-    function vasInputUpdate() {
+    function modVASInputUpdate() {
         const input = document.getElementById("jspsych-html-slider-response-response") as HTMLInputElement;
         const label = document.createElement("span");
         label.innerText = "0%";
@@ -85,9 +99,12 @@ return [
         timeline: [
         {
             type: jsp_ins,
-            pages: storm_config.messages.instructions,
+            pages: storm_config.messages.instructions[0],
             button_label_next: "Continue",
-            show_clickable_nav: true
+            show_clickable_nav: true,
+            allow_keys: false,
+            on_page_change: ()=>{modInstrDelay()},
+            on_load: ()=>{modInstrDelay()}
         },
         fixation,
         {
@@ -111,7 +128,21 @@ return [
             prompt: null,
             slider_start: 0,
             stimulus_duration: null,
-            on_load: vasInputUpdate
+            // trial_duration: storm_config.timing.resp2
+            on_load: ()=>{modVASInputUpdate()}
+        },
+        {
+            type: jsp_vas,
+            stimulus: storm_config.messages.curiosity,
+            slider_width: 300,
+            labels: ["I do not care", "I really want to see it"],
+            prompt: null,
+            slider_start: 50,
+            stimulus_duration: null,
+            // trial_duration: storm_config.timing.resp2,
+            data: {
+                eventname: "rate_curiosity",
+            }
         },
         fixation,
         {
@@ -121,6 +152,14 @@ return [
             trial_duration: storm_config.timing.clear
         },
         fixation,
+        {
+            type: jsp_ins,
+            pages: storm_config.messages.instructions[1],
+            button_label_next: "Continue",
+            show_clickable_nav: true,
+            allow_keys: false,
+            on_page_change: ()=>{modInstrDelay()},
+            on_load: ()=>{modInstrDelay()}
         }
         ]
     },
@@ -132,7 +171,6 @@ return [
             onset_fixation,
             {
                 type: jsp_key,
-                // TODO: Randomize blur levels.                
                 stimulus: ()=>{
                     const id: string = jsPsych.evaluateTimelineVariable("image_uri");
                     const blur: number = jsPsych.evaluateTimelineVariable("blur");
@@ -163,12 +201,25 @@ return [
                 slider_width: 300,
                 labels: ["0% Certain", "100% Certain"],
                 prompt: null,
-                slider_start: 50,
+                slider_start: 0,
                 stimulus_duration: null,
-                trial_duration: storm_config.timing.resp2,
-                onload: vasInputUpdate,
+                // trial_duration: storm_config.timing.resp2,
+                on_load: ()=>{modVASInputUpdate()},
                 data: {
                     eventname: "rate_confidence",
+                }
+            },
+            {
+                type: jsp_vas,
+                stimulus: storm_config.messages.curiosity,
+                slider_width: 300,
+                labels: ["I do not care", "I really want to see it"],
+                prompt: null,
+                slider_start: 50,
+                stimulus_duration: null,
+                // trial_duration: storm_config.timing.resp2,
+                data: {
+                    eventname: "rate_curiosity",
                 }
             },
             // TODO: Commit this section to another branch.
