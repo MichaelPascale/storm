@@ -111,7 +111,7 @@ return [
         fixation,
         {
             type: jsp_key,
-            stimulus: ()=>`<img class="storm_image" src=\"${storm_config.url_stimuli.location + storm_config.url_stimuli.special[0]}\" style="width: 100mm; height: 100mm; filter: blur(5px);">`,
+            stimulus: ()=>`<img class="storm-image" src=\"${storm_config.url_stimuli.location + storm_config.url_stimuli.special[0]}\" style="width: 100mm; height: 100mm; filter: blur(5px);">`,
             choices: "NO_KEYS",
             trial_duration: storm_config.timing.stim
         },
@@ -149,7 +149,7 @@ return [
         fixation,
         {
             type: jsp_key,
-            stimulus: ()=>`<img class="storm_image" src=\"${storm_config.url_stimuli.location + storm_config.url_stimuli.special[1]}\" style="width: 100mm; height: 100mm;">`,
+            stimulus: ()=>`<img class="storm-image" src=\"${storm_config.url_stimuli.location + storm_config.url_stimuli.special[1]}\" style="width: 100mm; height: 100mm;">`,
             choices: "NO_KEYS",
             trial_duration: storm_config.timing.clear
         },
@@ -182,7 +182,7 @@ return [
                     if (!PRODUCTION)
                         console.log("image: " + id + ", blur: " + blur);
 
-                    return `<img class="storm_image" src=\"${url}\" style="width: 100mm; height: 100mm; filter: blur(${blur}px);">`;
+                    return `<img class="storm-image" src=\"${url}\" style="width: 100mm; height: 100mm; filter: blur(${blur}px);">`;
                 },
                 choices: "NO_KEYS",
                 trial_duration: storm_config.timing.stim,
@@ -238,7 +238,7 @@ return [
                         id = id.replace("shine", "desat");
                     const url = storm_config.url_stimuli.location +
                         (id.indexOf("/") < 0 ? storm_config.url_stimuli.directories[1] + "/" + id : id);
-                    return `<img class="storm_image" src=\"${url}\" style="width: 100mm; height: 100mm;">`;
+                    return `<img class="storm-image" src=\"${url}\" style="width: 100mm; height: 100mm;">`;
                 },
                 choices: "NO_KEYS",
                 trial_duration: storm_config.timing.clear,

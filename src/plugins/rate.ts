@@ -107,7 +107,7 @@ class jsp_plugin_rate implements JsPsychPlugin<Info> {
 
     const stimulus = document.createElement("div");
     stimulus.id = "jspsych-html-slider-response-stimulus";
-    stimulus.innerHTML = "<div class=\"storm_box\"><span>?</span></div>"
+    stimulus.innerHTML = "<div class=\"storm-box\"><span>?</span></div>"
     stimulus.style = "margin: 3em;"
 
     const container = document.createElement("div");
@@ -194,18 +194,16 @@ class jsp_plugin_rate implements JsPsychPlugin<Info> {
       response.rt = Math.round(endTime - startTime);
       response.response = slider.valueAsNumber;
 
-      if (trial.response_ends_trial) {
-        end_trial();
-      } else {
-        button.disabled = true;
-      }
-    });
+      // Reveal the hidden stimulus.
+      slider.disabled = true;
+      button.hidden = true;
+      stimulus.innerHTML = trial.stimulus;
 
-    if (typeof trial.stimulus_duration === "number") {
-      this.jsPsych.pluginAPI.setTimeout(() => {
-        stimulus.style.visibility = "hidden";
-      }, trial.stimulus_duration);
-    }
+      if (trial.stimulus_duration)
+        this.jsPsych.pluginAPI.setTimeout(end_trial, trial.stimulus_duration);
+      else
+        end_trial();
+    });
 
     // end trial if trial_duration is set
     if (typeof trial.trial_duration === "number") {

@@ -1,0 +1,94 @@
+/* storm.css
+ * Style definitions for the stimulus display.
+ * 
+ * Copyright (c) 2025-2026, Michael P. Pascale <mpascale@bu.edu>
+ * SPDX-License-Identifier: MIT
+ * 
+ * Last modified: 2026-11-14
+ */
+
+:root {
+    --storm-stim-width: 100mm;
+    --storm-menu-height: 10mm;
+
+    --storm-interface-color-fg: grey;
+    --storm-interface-color-bg: hsl(0,0%,52.4%);
+    --storm-interface-color-text: black;
+
+    /* --storm-interface-font: Arial, monospace; */
+
+    --storm-stim-border-width: 1.5mm;
+    --storm-stim-border-color: hsl(0,0%,65%);
+}
+
+body {
+    background-color: var(--storm-interface-color-bg);
+    /* font-family: var(--storm-interface-font); */
+    font-size: 5mm;
+}
+
+.storm-presentation {
+    position:   absolute;
+    margin:     auto;
+    left:       0;
+    right:      0;
+    top:        0;
+    bottom:     0;
+    width:      var(--storm-stim-width);
+    height:     var(--storm-stim-width);
+    /* border:     1mm solid var(--storm-interface-color-fg); */
+}
+
+.storm-stim {
+    width: 100%;
+    height: 100%;
+    /* Blur will be changed programmatically */
+    filter: blur(40px);
+}
+
+.storm-message {
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    align-content: center;
+    display: block;
+    position: absolute;
+    z-index: 1;
+    top: 0;
+}
+
+.storm-menu {
+    position: absolute;
+    bottom: -30mm;
+    width: var(--storm-stim-width);
+    height: var(--storm-menu-height);
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+.storm-debug {
+    display: hidden;
+    position: absolute;
+    bottom: 1px;
+    right:1px;
+    font-size: 3mm;
+}
+
+.storm-image {
+    cursor: none;
+    width: var(--storm-stim-width);
+    height: var(--storm-stim-width);
+    border: var(--storm-stim-border-width) solid transparent;
+}
+
+.storm-box {
+    width: 100mm;
+    height: 100mm;
+    border: var(--storm-stim-border-width) dashed var(--storm-stim-border-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 15mm;
+    color: var(--storm-stim-border-color);
+}
