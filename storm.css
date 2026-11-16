@@ -10,6 +10,7 @@
 :root {
     /* Dimensions */
     --storm-stim-width: 100mm;
+    --storm-stim-height: var(--storm-stim-width);
     --storm-menu-height: 10mm;
     --storm-stim-border-width: 1.5mm;
 
@@ -79,7 +80,7 @@ body {
     top: 0;
     bottom: 0;
     width: var(--storm-stim-width);
-    height: var(--storm-stim-width);
+    height: var(--storm-stim-height);
     /* border:     1mm solid var(--storm-fg); */
 }
 
@@ -120,9 +121,12 @@ body {
 }
 
 .storm-image {
+    /* Images are inline by default. Setting to block removes text padding.*/
+    display: block;
     cursor: none;
     width: var(--storm-stim-width);
-    height: var(--storm-stim-width);
+    height: var(--storm-stim-height);
+    /* The border is necessary so that this element takes up the same width as storm-box. */
     border: var(--storm-stim-border-width) solid transparent;
 }
 
