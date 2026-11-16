@@ -11,12 +11,26 @@
     "trials": 40,
     "messages": {
         "instructions": [
-            "You will be shown pictures of different objects.",
-            "After each picture, you will provide your <b>best guess</b> as to the name of the object.",
-            "You will then rate your <b>confidence</b> that your guess was right (0% to 100% certain).",
+            [
+            "<p class=\"storm-instructions\">In this research study, you will see pictures of different objects.</p>",
+            "<p class=\"storm-instructions\">The images will be blurry and hard to see at first.<br /><br />Later on, you'll get to see the clear versions.</p>",
+            "<p class=\"storm-instructions\">After each picture, you will provide your <b>best guess</b> for the name of the main object in the photo.<br /><br />Name the main object, not things in the background. Short, single word responses are ok, and spelling errors do not matter.</p>",
+            "<p class=\"storm-instructions\">Do your best to come up with an accurate guess. If you really are not sure, you can leave your response blank. There is no penalty for being wrong.</p>",
+            "<p class=\"storm-instructions\">You will then rate your <b>confidence</b> that your guess was the correct label (0% to 100% certain).<br /><br />For example, 50% confidence would mean an equal chance of being right or being wrong (like a coin flip).</p>",
+            "<p class=\"storm-instructions\">Next, you will rate <b>how much you want to see the clear image</b> (from \"I do not care at all\" to \"I really want to know!\").</p>",
+            "<p class=\"storm-instructions\">Finally, you will get to see the clear version</u> of the picture.</p>",
+            "<p class=\"storm-instructions\">Click <i>Continue</i> to go through an example.</p>"
+            ],
+            [
+                "<p class=\"storm-instructions\">Each trial will be the same.<br/><br/>You will 1) see an image, and 2) guess the object.<br/>You will then 3) rate your confidence, and 4) your interest in seeing the clear image.<br />The clear image will then be shown.</p>",
+                "<p class=\"storm-instructions\">This concludes the instructions. Click <i>Continue</i> when you are ready to begin.</p>"
+            ]
         ],
-        "guess": "What is your <b>best guess</b> for the name of the object?",
-        "confidence": "How confident are you that your guess is correct?",
+        "guess": "<p>What is your <b>best guess</b> for the name of the object?</p>",
+        "confidence": "<p>How <b>confident</b> are you that your guess is correct?</p>",
+        "confidence_labels": ["0% Certain", "100% Certain"],
+        "curiosity": "<p>How much do you <b>want to see</b> the clear image?</p>",
+        "curiosity_labels": ["I do not care", "I really want to see it"],
         "loading": "The study is loading. Please wait...",
         "fullscreen": "When you are ready to begin, click the button to start the experiment in full-screen mode.<br/>",
         "completion": "The study is complete. You may now close this window.",
@@ -25,9 +39,10 @@
         "exclude_browser": "This experiment is not compatible with your web browser."
     },
     "timing": {
-        "stim":  10000,
+        "instr": 2000,
         "resp1": 10000,
-        "resp2": 10000
+        "clear": 2500,
+        "fixation": 800
     },
     "random": {
         "blur": [2, 2.639016, 3.482202, 4.594793, 6.062866, 8]

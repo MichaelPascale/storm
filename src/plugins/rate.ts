@@ -10,7 +10,7 @@
  * Copyright (c) 2014-2022 Joshua R. de Leeuw 
  * SPDX-License-Identifier: MIT
  * 
- * Last modified: 2026-11-12
+ * Last modified: 2026-11-16
  */
 
 import { JsPsych, type JsPsychPlugin, ParameterType, type TrialType } from "jspsych";
@@ -106,9 +106,16 @@ class jsp_plugin_rate implements JsPsychPlugin<Info> {
     wrapper.style = "margin: 3em 0px;";
 
     const stimulus = document.createElement("div");
-    stimulus.id = "jspsych-html-slider-response-stimulus";
-    stimulus.innerHTML = "<div class=\"storm-box\"><span>?</span></div>"
     stimulus.style = "margin: 3em;"
+
+    const box = document.createElement("div");
+    box.innerHTML = "<div class=\"storm-box\"><span>?</span></div>";
+    stimulus.appendChild(box);
+
+    const reveal = document.createElement("div");
+    reveal.innerHTML = trial.stimulus;
+    reveal.hidden = true;
+    stimulus.appendChild(reveal);
 
     const container = document.createElement("div");
     container.classList.add("jspsych-html-slider-response-container");
@@ -151,7 +158,6 @@ class jsp_plugin_rate implements JsPsychPlugin<Info> {
     wrapper.appendChild(container);
     container.appendChild(slider);
     container.appendChild(labels);
-    wrapper.appendChild(stimulus);
 
     const button = document.createElement("button");
     button.id = "jspsych-html-slider-response-next";
@@ -161,6 +167,7 @@ class jsp_plugin_rate implements JsPsychPlugin<Info> {
     button.innerHTML = trial.button_label || "";
 
     display_element.appendChild(wrapper);
+    display_element.appendChild(stimulus);
     display_element.appendChild(button);
 
     const response = {
@@ -196,8 +203,13 @@ class jsp_plugin_rate implements JsPsychPlugin<Info> {
 
       // Reveal the hidden stimulus.
       slider.disabled = true;
+
+      button.disabled = true;
       button.hidden = true;
-      stimulus.innerHTML = trial.stimulus;
+
+      box.hidden=true;
+      reveal.hidden=false;
+
 
       if (trial.stimulus_duration)
         this.jsPsych.pluginAPI.setTimeout(end_trial, trial.stimulus_duration);

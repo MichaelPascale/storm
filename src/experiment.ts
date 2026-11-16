@@ -112,7 +112,7 @@ return [
         fixation,
         {
             type: jsp_key,
-            stimulus: ()=>`<img class="storm-image" src=\"${storm_config.url_stimuli.location + storm_config.url_stimuli.special[0]}\" style="width: 100mm; height: 100mm; filter: blur(5px);">`,
+            stimulus: ()=>`<img class="storm-image" src=\"${storm_config.url_stimuli.location + storm_config.url_stimuli.special[0]}\" style="filter: blur(5px);">`,
             choices: "NO_KEYS",
             trial_duration: storm_config.timing.stim
         },
@@ -136,24 +136,16 @@ return [
             on_load: ()=>{modVASInputUpdate()}
         },
         {
-            type: jsp_vas,
-            stimulus: storm_config.messages.curiosity,
+            type: jsp_plugin_rate,
+            stimulus: ()=>`<img class="storm-image" src=\"${storm_config.url_stimuli.location + storm_config.url_stimuli.special[1]}\">`,
+            prompt: storm_config.messages.curiosity,
             slider_width: 300,
             labels: ["I do not care", "I really want to see it"],
-            prompt: null,
             slider_start: 50,
-            stimulus_duration: null,
-            // trial_duration: storm_config.timing.resp2,
+            stimulus_duration: storm_config.timing.clear,
             data: {
                 eventname: "rate_curiosity",
             }
-        },
-        fixation,
-        {
-            type: jsp_key,
-            stimulus: ()=>`<img class="storm-image" src=\"${storm_config.url_stimuli.location + storm_config.url_stimuli.special[1]}\" style="width: 100mm; height: 100mm;">`,
-            choices: "NO_KEYS",
-            trial_duration: storm_config.timing.clear
         },
         fixation,
         {
@@ -184,7 +176,7 @@ return [
                     if (!PRODUCTION)
                         console.log("image: " + id + ", blur: " + blur);
 
-                    return `<img class="storm-image" src=\"${url}\" style="width: 100mm; height: 100mm; filter: blur(${blur}px);">`;
+                    return `<img class="storm-image" src=\"${url}\" style="filter: blur(${blur}px);">`;
                 },
                 choices: "NO_KEYS",
                 trial_duration: storm_config.timing.stim,
@@ -204,7 +196,7 @@ return [
                 type: jsp_vas,
                 stimulus: storm_config.messages.confidence,
                 slider_width: 300,
-                labels: ["0% Certain", "100% Certain"],
+                labels: storm_config.messages.confidence_labels,
                 prompt: null,
                 slider_start: 0,
                 stimulus_duration: null,
@@ -215,38 +207,21 @@ return [
                 }
             },
             {
-                type: jsp_vas,
-                stimulus: storm_config.messages.curiosity,
-                slider_width: 300,
-                labels: ["I do not care", "I really want to see it"],
-                prompt: null,
-                slider_start: 50,
-                stimulus_duration: null,
-                // trial_duration: storm_config.timing.resp2,
-                data: {
-                    eventname: "rate_curiosity",
-                }
-            },
-            // TODO: Commit this section to another branch.
-            {
-                type: jsp_key,
-                // TODO: Decide whether to show the clarified image.
-                // The advantage of this is that norming partipants have the
-                // opportunity to experience curiosity relief; potentially boosted
-                // engagement. We may also observe drift in confidence ratings if
-                // participants calibrate to this feedback.
+                type: jsp_plugin_rate,
                 stimulus: ()=>{
                     let id: string = jsPsych.evaluateTimelineVariable("image_uri");
                     if (id.indexOf("demo") == 0)
                         id = id.replace("shine", "desat");
                     const url = storm_config.url_stimuli.location +
                         (id.indexOf("/") < 0 ? storm_config.url_stimuli.directories[1] + "/" + id : id);
-                    return `<img class="storm-image" src=\"${url}\" style="width: 100mm; height: 100mm;">`;
-                },
-                choices: "NO_KEYS",
-                trial_duration: storm_config.timing.clear,
+                    return `<img class="storm-image" src=\"${url}\">`;
+                },                prompt: storm_config.messages.curiosity,
+                slider_width: 300,
+                labels: storm_config.messages.curiosity_labels,
+                slider_start: 50,
+                stimulus_duration: storm_config.timing.clear,
                 data: {
-                    eventname: "clear_image"
+                    eventname: "rate_curiosity",
                 }
             }
         ],
