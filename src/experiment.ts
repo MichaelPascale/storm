@@ -4,7 +4,7 @@
  * Copyright (c) 2026, Michael P. Pascale <mpascale@bu.edu>
  * SPDX-License-Identifier: MIT
  * 
- * Last modified: 2026-11-12
+ * Last modified: 2026-11-16
  */
 
 import {JsPsych, type TrialType} from "jspsych";
@@ -55,6 +55,7 @@ export default function (jsPsych: JsPsych, params: URLSearchParams) {
         stimulus: '<div style="font-size:10mm">+</div>',
         choices: 'NO_KEYS',
         trial_duration: storm_config.timing.fixation,
+        on_load: ()=>{document.body.style.cursor = "none"},
         data: {
             eventname: "fixation"
         }
@@ -120,7 +121,8 @@ return [
             questions: [{
                 prompt: storm_config.messages.guess,
                 placeholder: "duck"
-            }]
+            }],
+            on_load: ()=>{document.body.style.cursor = "auto"},
         },
         {
             type: jsp_vas,
@@ -161,7 +163,7 @@ return [
             show_clickable_nav: true,
             allow_keys: false,
             on_page_change: ()=>{modInstrDelay()},
-            on_load: ()=>{modInstrDelay()}
+            on_load: ()=>{document.body.style.cursor = "auto"; modInstrDelay();}
         }
         ]
     },
@@ -193,6 +195,7 @@ return [
             {
                 type: jsp_txt,
                 questions: [{prompt: storm_config.messages.guess}],
+                on_load: ()=>{document.body.style.cursor = "auto"},
                 data: {
                     eventname: "guess",
                 }
