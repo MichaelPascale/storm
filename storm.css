@@ -4,39 +4,83 @@
  * Copyright (c) 2025-2026, Michael P. Pascale <mpascale@bu.edu>
  * SPDX-License-Identifier: MIT
  * 
- * Last modified: 2026-11-14
+ * Last modified: 2026-11-16
  */
 
 :root {
+    /* Dimensions */
     --storm-stim-width: 100mm;
     --storm-menu-height: 10mm;
-
-    --storm-interface-color-fg: grey;
-    --storm-interface-color-bg: hsl(0,0%,52.4%);
-    --storm-interface-color-text: black;
-
-    /* --storm-interface-font: Arial, monospace; */
-
     --storm-stim-border-width: 1.5mm;
-    --storm-stim-border-color: hsl(0,0%,65%);
+
+    /* If using stimuli with controlled luminance, set L accordingly. */
+    --storm-stim-controlled-luminance-color: hsl(0, 0%, 52.4%);
+
+    /* Interface Colors */
+    --storm-fg:             var(--stclc-p15);
+    --storm-bg:             var(--stclc);
+    --storm-txt:            var(--stclc-m40);
+
+    --storm-ctrl-bg:        var(--stclc-p30);
+    --storm-ctrl-fg:        var(--stclc-p35);
+    --storm-ctrl-txt:       var(--stclc-m35);
+    --storm-ctrl-brd:       var(--stclc-m15);
+
+    --storm-ctrl-bg-hov:    var(--stclc-p35);
+    --storm-ctrl-fg-hov:    var(--stclc-p40);
+    --storm-ctrl-brd-hov:   var(--stclc-m10);
+    
+    --storm-ctrl-bg-act:    var(--stclc-p15);
+    --storm-ctrl-fg-act:    var(--storm-ctrl-bg);
+    --storm-ctrl-brd-act:   var(--storm-ctrl-bg);
+
+    --storm-ctrl-bg-dis:    var(--stclc-p15);
+    --storm-ctrl-fg-dis:    var(--stclc-p25);
+    --storm-ctrl-txt-dis:   var(--stclc-m20);
+    --storm-ctrl-brd-dis:   var(--storm-ctrl-bg-dis);
+
+    --storm-stim-border:    var(--storm-fg);
+
+    /* Fonts */
+    /* --storm-font: Arial, monospace; */
+
+    /* Variations from the stimulus color to keep contrast relative to that value. */
+    --stclc: var(--storm-stim-controlled-luminance-color);
+    --stclc-p40: hsl(from var(--stclc) h s calc(l + 40));
+    --stclc-p35: hsl(from var(--stclc) h s calc(l + 35));
+    --stclc-p30: hsl(from var(--stclc) h s calc(l + 30));
+    --stclc-p25: hsl(from var(--stclc) h s calc(l + 25));
+    --stclc-p20: hsl(from var(--stclc) h s calc(l + 20));
+    --stclc-p15: hsl(from var(--stclc) h s calc(l + 15));
+    --stclc-p10: hsl(from var(--stclc) h s calc(l + 10));
+    --stclc-p5:  hsl(from var(--stclc) h s calc(l + 5));
+    --stclc-m5:  hsl(from var(--stclc) h s calc(l - 5));
+    --stclc-m10: hsl(from var(--stclc) h s calc(l - 10));
+    --stclc-m15: hsl(from var(--stclc) h s calc(l - 15));
+    --stclc-m20: hsl(from var(--stclc) h s calc(l - 20));
+    --stclc-m25: hsl(from var(--stclc) h s calc(l - 25));
+    --stclc-m30: hsl(from var(--stclc) h s calc(l - 30));
+    --stclc-m35: hsl(from var(--stclc) h s calc(l - 35));
+    --stclc-m40: hsl(from var(--stclc) h s calc(l - 40));
 }
 
 body {
-    background-color: var(--storm-interface-color-bg);
-    /* font-family: var(--storm-interface-font); */
+    background-color: var(--storm-bg);
+    color: var(--storm-txt);
+    /* font-family: var(--storm-font); */
     font-size: 5mm;
 }
 
 .storm-presentation {
-    position:   absolute;
-    margin:     auto;
-    left:       0;
-    right:      0;
-    top:        0;
-    bottom:     0;
-    width:      var(--storm-stim-width);
-    height:     var(--storm-stim-width);
-    /* border:     1mm solid var(--storm-interface-color-fg); */
+    position: absolute;
+    margin: auto;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: var(--storm-stim-width);
+    height: var(--storm-stim-width);
+    /* border:     1mm solid var(--storm-fg); */
 }
 
 .storm-stim {
@@ -71,7 +115,7 @@ body {
     display: hidden;
     position: absolute;
     bottom: 1px;
-    right:1px;
+    right: 1px;
     font-size: 3mm;
 }
 
@@ -85,10 +129,121 @@ body {
 .storm-box {
     width: 100mm;
     height: 100mm;
-    border: var(--storm-stim-border-width) dashed var(--storm-stim-border-color);
+    border: var(--storm-stim-border-width) dashed var(--storm-stim-border);
     display: flex;
     justify-content: center;
     align-items: center;
     font-size: 15mm;
-    color: var(--storm-stim-border-color);
+    color: var(--storm-stim-border);
+}
+
+.storm-instructions {
+    min-height: 3lh;
+}
+
+
+/* Modifications to jsPsych components... */
+.jspsych-btn {
+    color: var(--storm-ctrl-txt);
+    background-color: var(--storm-ctrl-bg);
+    border-color: var(--storm-ctrl-brd);
+}
+
+.jspsych-btn:hover {
+    background-color: var(--storm-ctrl-bg-hov);
+    border-color: var(--storm-ctrl-brd-hov);
+}
+
+.jspsych-btn:active {
+    background-color: var(--storm-ctrl-bg-act);
+    border-color: var(--storm-ctrl-brd-act);
+
+}
+
+.jspsych-btn:disabled {
+    color: var(--storm-ctrl-txt-dis);
+    background-color: var(--storm-ctrl-bg-dis);
+    border-color: var(--storm-ctrl-brd-dis);
+}
+
+.jspsych-slider::-webkit-slider-runnable-track {
+    cursor: pointer;
+    background: var(--storm-ctrl-bg);
+}
+
+.jspsych-slider::-moz-range-track {
+    background: var(--storm-ctrl-bg);
+}
+
+.jspsych-slider:disabled:-webkit-slider-runnable-track {
+    background: var(--storm-ctrl-bg-dis);
+    cursor: not-allowed;
+}
+
+.jspsych-slider:disabled::-moz-range-track {
+    background: var(--storm-ctrl-bg-dis);
+    cursor: not-allowed;
+}
+
+.jspsych-slider::-webkit-slider-thumb {
+    background: var(--storm-ctrl-fg);
+    border-color: var(--storm-ctrl-brd);
+}
+
+.jspsych-slider::-moz-range-thumb {
+    background: var(--storm-ctrl-fg);
+    border-color: var(--storm-ctrl-brd);
+}
+
+.jspsych-slider:disabled::-webkit-slider-thumb {
+    background: var(--storm-ctrl-fg-dis);
+    border-color: var(--storm-ctrl-brd-dis);
+    cursor: not-allowed;
+}
+
+.jspsych-slider:disabled::-moz-range-thumb {
+    background: var(--storm-ctrl-fg-dis);
+    border-color: var(--storm-ctrl-brd-dis);
+    cursor: not-allowed;
+}
+
+/*  Experimental modifications to the range input for displaying tick marks. */
+.jspsych-slider.storm-rating-exp::-moz-range-track {
+    width: calc(100% - 24px);
+    background: 
+    linear-gradient(to bottom,
+        transparent calc(50% - 1px),
+        #d3d3d3 calc(50% - 1px),
+        #d3d3d3 calc(50% + 1px),
+        var(--storm-ctrl-bg) calc(50%)
+    ),
+    linear-gradient(to right,
+        transparent calc(25% - 1px),
+        hsl(0,0%,0%,.1) calc(25% - 1px),
+        hsl(0,0%,0%,.1) calc(25% + 1px),
+        transparent calc(25% + 1px),
+        transparent calc(50% - 1px),
+        hsl(0,0%,0%,.1) calc(50% - 1px),
+        hsl(0,0%,0%,.1) calc(50% + 1px),
+        transparent calc(50% + 1px),
+        transparent calc(75% - 1px),
+        hsl(0,0%,0%,.1) calc(75% - 1px),
+        hsl(0,0%,0%,.1) calc(75% + 1px),
+        transparent calc(75% + 1px)
+    ),
+    var(--storm-ctrl-bg);
+}
+
+/*  Experimental modifications to the range input for a triangular pointer/thumb. */
+.jspsych-slider.storm-rating-exp::-moz-range-thumb {
+    width: 24px;
+    height: 20px;
+    background: var(--storm-ctrl-fg);
+    border: none;
+    border-radius: 0;
+    cursor: pointer;
+    clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+    transform: translateY(10px);
+    transition: background 0.2s, transform 0.2s;
+    cursor: pointer;
 }
