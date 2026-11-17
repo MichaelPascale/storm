@@ -4,7 +4,7 @@
  * Copyright (c) 2026, Michael P. Pascale <mpascale@bu.edu>
  * SPDX-License-Identifier: MIT
  * 
- * Last modified: 2026-11-16
+ * Last modified: 2026-11-17
  */
 
 import {JsPsych, type TrialType} from "jspsych";
@@ -157,7 +157,7 @@ return [
 
                     return url;
                 },
-                style: ()=>{`filter: blur(${jsPsych.evaluateTimelineVariable("blur")}px);`},
+                style: ()=>`filter: blur(${jsPsych.evaluateTimelineVariable("blur")}px);`,
                 prompt_response: storm_config.messages.guess,
                 prompt_rating: storm_config.messages.confidence,
                 labels: storm_config.messages.confidence_labels,
