@@ -81,7 +81,9 @@ body {
     bottom: 0;
     width: var(--storm-stim-width);
     height: var(--storm-stim-height);
-    /* border:     1mm solid var(--storm-fg); */
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .storm-stim {

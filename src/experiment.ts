@@ -13,6 +13,7 @@ import jsp_txt from '@jspsych/plugin-survey-text';
 import jsp_key from '@jspsych/plugin-html-keyboard-response';
 import jsp_vas from '@jspsych/plugin-html-slider-response';
 import jsp_plugin_rate from "./plugins/rate";
+import jsp_plugin_guess from "./plugins/guess";
 
 import storm_config from "./config.json" with {type: "json"};
 import storm_stimuli from "./stimuli.json" with {type: "json"};
@@ -85,15 +86,6 @@ export default function (jsPsych: JsPsych, params: URLSearchParams) {
         jsPsych.pluginAPI.setTimeout(()=>{button.disabled = false;}, storm_config.timing.instr);
     }
 
-    // Modify the slider input to display the current value.
-    function modVASInputUpdate() {
-        const input = document.getElementById("jspsych-html-slider-response-response") as HTMLInputElement;
-        const label = document.createElement("span");
-        label.innerText = "0%";
-        input?.parentElement?.appendChild(label);
-        input?.addEventListener("input", () => { label.innerText = `${input?.value}%` })
-    }
-
 return [
     /**************************************************************************
      * Instructions
@@ -109,31 +101,19 @@ return [
             on_page_change: ()=>{modInstrDelay()},
             on_load: ()=>{modInstrDelay()}
         },
-        fixation,
         {
-            type: jsp_key,
-            stimulus: ()=>`<img class="storm-image" src=\"${storm_config.url_stimuli.location + storm_config.url_stimuli.special[0]}\" style="filter: blur(5px);">`,
-            choices: "NO_KEYS",
-            trial_duration: storm_config.timing.stim
-        },
-        {
-            type: jsp_txt,
-            questions: [{
-                prompt: storm_config.messages.guess,
-                placeholder: "duck"
-            }],
-            on_load: ()=>{document.body.style.cursor = "auto"},
-        },
-        {
-            type: jsp_vas,
-            stimulus: storm_config.messages.confidence,
-            slider_width: 300,
-            labels: ["0% Certain", "100% Certain"],
-            prompt: null,
-            slider_start: 0,
-            stimulus_duration: null,
-            // trial_duration: storm_config.timing.resp2
-            on_load: ()=>{modVASInputUpdate()}
+            type: jsp_plugin_guess,
+            stimulus: ()=>`${storm_config.url_stimuli.location + storm_config.url_stimuli.special[0]}`,
+            style: ()=>`filter: blur(${1}px);`,
+            prompt_response: storm_config.messages.guess,
+            placeholder_response: "duck",
+            prompt_rating: storm_config.messages.confidence,
+            labels: storm_config.messages.confidence_labels,
+            fixation_duration: storm_config.timing.fixation,
+            stimulus_duration: storm_config.timing.stim,
+            data: {
+                eventname: "guess_confidence"
+            }
         },
         {
             type: jsp_plugin_rate,
@@ -164,9 +144,8 @@ return [
      */
     {
         timeline: [
-            onset_fixation,
             {
-                type: jsp_key,
+                type: jsp_plugin_guess,
                 stimulus: ()=>{
                     const id: string = jsPsych.evaluateTimelineVariable("image_uri");
                     const blur: number = jsPsych.evaluateTimelineVariable("blur");
@@ -176,34 +155,21 @@ return [
                     if (!PRODUCTION)
                         console.log("image: " + id + ", blur: " + blur);
 
-                    return `<img class="storm-image" src=\"${url}\" style="filter: blur(${blur}px);">`;
+                    return url;
                 },
-                choices: "NO_KEYS",
-                trial_duration: storm_config.timing.stim,
-                data: {
-                    eventname: "image",
-                }
-            },
-            {
-                type: jsp_txt,
-                questions: [{prompt: storm_config.messages.guess}],
-                on_load: ()=>{document.body.style.cursor = "auto"},
-                data: {
-                    eventname: "guess",
-                }
-            },
-            {
-                type: jsp_vas,
-                stimulus: storm_config.messages.confidence,
-                slider_width: 300,
+                style: ()=>{`filter: blur(${jsPsych.evaluateTimelineVariable("blur")}px);`},
+                prompt_response: storm_config.messages.guess,
+                prompt_rating: storm_config.messages.confidence,
                 labels: storm_config.messages.confidence_labels,
-                prompt: null,
-                slider_start: 0,
-                stimulus_duration: null,
-                // trial_duration: storm_config.timing.resp2,
-                on_load: ()=>{modVASInputUpdate()},
+                fixation_duration: storm_config.timing.fixation,
+                stimulus_duration: storm_config.timing.stim,
                 data: {
-                    eventname: "rate_confidence",
+                    eventname: "guess_confidence"
+                },
+                on_finish: (data: any)=>{
+                    data.stimfile = jsPsych.evaluateTimelineVariable("image_uri");
+                    data.blur = jsPsych.evaluateTimelineVariable("blur");
+                    data.trialGroup = jsPsych.evaluateTimelineVariable("trialGroup");
                 }
             },
             {
