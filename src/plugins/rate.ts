@@ -10,7 +10,7 @@
  * Copyright (c) 2014-2022 Joshua R. de Leeuw 
  * SPDX-License-Identifier: MIT
  * 
- * Last modified: 2026-11-16
+ * Last modified: 2026-11-17
  */
 
 import { JsPsych, type JsPsychPlugin, ParameterType, type TrialType } from "jspsych";
@@ -19,9 +19,16 @@ const info = <const>{
   name: "plugin-rate",
   version: VERSION,
   parameters: {
+    // The stimuli to display, first the obscured; then the clear.
     stimulus: {
       type: ParameterType.HTML_STRING,
-      default: undefined,
+      default: [],
+      array: true
+    },
+    style: {
+      type: ParameterType.STRING,
+      default: [],
+      array: true
     },
     min: {
       type: ParameterType.INT,
@@ -44,13 +51,9 @@ const info = <const>{
       default: [],
       array: true,
     },
-    slider_width: {
-      type: ParameterType.INT,
-      default: null,
-    },
     button_label: {
       type: ParameterType.STRING,
-      default: "Continue",
+      default: "Reveal",
       array: false,
     },
     require_movement: {
@@ -78,7 +81,7 @@ const info = <const>{
     rt: {
       type: ParameterType.INT,
     },
-    response: {
+    rating: {
       type: ParameterType.INT,
     },
     stimulus: {
@@ -98,6 +101,10 @@ class jsp_plugin_rate implements JsPsychPlugin<Info> {
   constructor(private jsPsych: JsPsych) { }
 
   trial(display_element: HTMLElement, trial: TrialType<Info>) {
+
+    if (!trial.stimulus || trial.stimulus.length < 2)
+      throw Error(info.name + " received invalid stimulus string array.")
+
     // half of the thumb width value from jspsych.css, used to adjust the label positions
     var half_thumb_width = 7.5;
 
@@ -109,13 +116,19 @@ class jsp_plugin_rate implements JsPsychPlugin<Info> {
     stimulus.style = "margin: 3em;"
 
     const box = document.createElement("div");
-    box.innerHTML = "<div class=\"storm-box\"><span>?</span></div>";
+    box.classList.add("storm-box");
+    box.innerHTML = "<span>?</span>";
     stimulus.appendChild(box);
 
-    const reveal = document.createElement("div");
-    reveal.innerHTML = trial.stimulus;
-    reveal.hidden = true;
-    stimulus.appendChild(reveal);
+    trial.stimulus.forEach((stim, i)=>{
+      const el = document.createElement("img");
+      el.src = stim;
+      el.classList.add("storm-image");
+      if (trial.style)
+        el.style = trial.style[i] || "";
+      el.hidden = true;
+      stimulus.appendChild(el);
+    });
 
     const container = document.createElement("div");
     container.classList.add("jspsych-html-slider-response-container");
@@ -172,7 +185,7 @@ class jsp_plugin_rate implements JsPsychPlugin<Info> {
 
     const response = {
       rt: NaN,
-      response: NaN,
+      rating: NaN,
     };
 
     if (trial.require_movement) {
@@ -188,7 +201,7 @@ class jsp_plugin_rate implements JsPsychPlugin<Info> {
         rt: response.rt,
         stimulus: trial.stimulus,
         slider_start: trial.slider_start,
-        response: response.response,
+        response: response.rating,
       };
 
       // next trial
@@ -199,22 +212,28 @@ class jsp_plugin_rate implements JsPsychPlugin<Info> {
       // measure response time
       var endTime = performance.now();
       response.rt = Math.round(endTime - startTime);
-      response.response = slider.valueAsNumber;
+      response.rating = slider.valueAsNumber;
 
       // Reveal the hidden stimulus.
       slider.disabled = true;
-
       button.disabled = true;
-      button.hidden = true;
+      // TODO: Handle the participant taking too long.
 
-      box.hidden=true;
-      reveal.hidden=false;
+      if (trial.stimulus_duration && trial.stimulus) {
 
+        trial.stimulus.forEach((stim, i)=>{
+          this.jsPsych.pluginAPI.setTimeout(()=>{
+            const node = stimulus.children.item(i+1) as HTMLElement;
+            (node.previousSibling as HTMLElement).hidden = true;
+            node.hidden = false;
+          }, (trial.stimulus_duration || 0)*(i));
+        });
 
-      if (trial.stimulus_duration)
-        this.jsPsych.pluginAPI.setTimeout(end_trial, trial.stimulus_duration);
-      else
-        end_trial();
+        this.jsPsych.pluginAPI.setTimeout(end_trial, trial.stimulus_duration*2);
+        return;
+      }
+
+      end_trial();
     });
 
     // end trial if trial_duration is set

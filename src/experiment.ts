@@ -92,51 +92,55 @@ return [
      */
     {
         timeline: [
-        {
-            type: jsp_ins,
-            pages: storm_config.messages.instructions[0],
-            button_label_next: "Continue",
-            show_clickable_nav: true,
-            allow_keys: false,
-            on_page_change: ()=>{modInstrDelay()},
-            on_load: ()=>{modInstrDelay()}
-        },
-        {
-            type: jsp_plugin_guess,
-            stimulus: ()=>`${storm_config.url_stimuli.location + storm_config.url_stimuli.special[0]}`,
-            style: ()=>`filter: blur(${1}px);`,
-            prompt_response: storm_config.messages.guess,
-            placeholder_response: "duck",
-            prompt_rating: storm_config.messages.confidence,
-            labels: storm_config.messages.confidence_labels,
-            fixation_duration: storm_config.timing.fixation,
-            stimulus_duration: storm_config.timing.stim,
-            data: {
-                eventname: "guess_confidence"
+            {
+                type: jsp_ins,
+                pages: storm_config.messages.instructions[0],
+                button_label_next: "Continue",
+                show_clickable_nav: true,
+                allow_keys: false,
+                on_page_change: ()=>{modInstrDelay()},
+                on_load: ()=>{modInstrDelay()}
+            },
+            {
+                type: jsp_plugin_guess,
+                stimulus: ()=>`${storm_config.url_stimuli.location + storm_config.url_stimuli.special[0]}`,
+                style: ()=>`filter: blur(${2}px);`,
+                prompt_response: storm_config.messages.guess,
+                placeholder_response: "duck",
+                prompt_rating: storm_config.messages.confidence,
+                labels: storm_config.messages.confidence_labels,
+                fixation_duration: storm_config.timing.fixation,
+                stimulus_duration: storm_config.timing.stim,
+                require_movement: true,
+                data: {
+                    eventname: "guess_confidence"
+                }
+            },
+            {
+                type: jsp_plugin_rate,
+                stimulus: ()=>[
+                    `${storm_config.url_stimuli.location + storm_config.url_stimuli.special[0]}`,
+                    `${storm_config.url_stimuli.location + storm_config.url_stimuli.special[1]}`
+                ],
+                style: ["filter: blur(2px);", ""],
+                prompt: storm_config.messages.curiosity,
+                labels: storm_config.messages.curiosity_labels,
+                slider_start: 50,
+                stimulus_duration: storm_config.timing.clear,
+                data: {
+                    eventname: "rate_curiosity"
+                }
+            },
+            fixation,
+            {
+                type: jsp_ins,
+                pages: storm_config.messages.instructions[1],
+                button_label_next: "Continue",
+                show_clickable_nav: true,
+                allow_keys: false,
+                on_page_change: ()=>{modInstrDelay()},
+                on_load: ()=>{document.body.style.cursor = "auto"; modInstrDelay();}
             }
-        },
-        {
-            type: jsp_plugin_rate,
-            stimulus: ()=>`<img class="storm-image" src=\"${storm_config.url_stimuli.location + storm_config.url_stimuli.special[1]}\">`,
-            prompt: storm_config.messages.curiosity,
-            slider_width: 300,
-            labels: ["I do not care", "I really want to see it"],
-            slider_start: 50,
-            stimulus_duration: storm_config.timing.clear,
-            data: {
-                eventname: "rate_curiosity",
-            }
-        },
-        fixation,
-        {
-            type: jsp_ins,
-            pages: storm_config.messages.instructions[1],
-            button_label_next: "Continue",
-            show_clickable_nav: true,
-            allow_keys: false,
-            on_page_change: ()=>{modInstrDelay()},
-            on_load: ()=>{document.body.style.cursor = "auto"; modInstrDelay();}
-        }
         ]
     },
     /**************************************************************************
@@ -163,6 +167,7 @@ return [
                 labels: storm_config.messages.confidence_labels,
                 fixation_duration: storm_config.timing.fixation,
                 stimulus_duration: storm_config.timing.stim,
+                require_movement: true,
                 data: {
                     eventname: "guess_confidence"
                 },
@@ -176,18 +181,31 @@ return [
                 type: jsp_plugin_rate,
                 stimulus: ()=>{
                     let id: string = jsPsych.evaluateTimelineVariable("image_uri");
-                    if (id.indexOf("demo") == 0)
-                        id = id.replace("shine", "desat");
-                    const url = storm_config.url_stimuli.location +
-                        (id.indexOf("/") < 0 ? storm_config.url_stimuli.directories[1] + "/" + id : id);
-                    return `<img class="storm-image" src=\"${url}\">`;
-                },                prompt: storm_config.messages.curiosity,
-                slider_width: 300,
+
+                    // Standard ID or path?
+                    if (id.indexOf("/") < 0)
+                        return storm_config.url_stimuli.directories.map((dir)=>storm_config.url_stimuli.location + dir + "/" + id);
+
+                    // If path, then assume it's a demo image.
+                    if (id.indexOf("demo") != 0)
+                        throw Error("Custom image path not implemented other than for demo image.");
+                    
+                    id = storm_config.url_stimuli.location + id;
+
+                    return [id, id.replace("shine", "desat")];
+                },
+                style: [`filter: blur(${jsPsych.evaluateTimelineVariable("blur")}px);`, ""],
+                prompt: storm_config.messages.curiosity,
                 labels: storm_config.messages.curiosity_labels,
                 slider_start: 50,
                 stimulus_duration: storm_config.timing.clear,
                 data: {
-                    eventname: "rate_curiosity",
+                    eventname: "rate_curiosity"
+                },
+                on_finish: (data: any)=>{
+                    data.stimfile = jsPsych.evaluateTimelineVariable("image_uri");
+                    data.blur = jsPsych.evaluateTimelineVariable("blur");
+                    data.trialGroup = jsPsych.evaluateTimelineVariable("trialGroup");
                 }
             }
         ],
