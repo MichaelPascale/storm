@@ -19,21 +19,21 @@ import storm_config from "./config.json" with {type: "json"};
 import storm_stimuli from "./stimuli.json" with {type: "json"};
 import storm_order from "./order.json" with {type: "json"};
 
-export default function (jsPsych: JsPsych, params: URLSearchParams) {
+export default function (jsPsych: JsPsych, params: URLSearchParams, stimuli: string[]) {
 
     const order_index = Number.parseInt(params.get("ord") || "0");
-    if (order_index < 0 || order_index >= storm_order.length)
-        throw Error("Invalid participant.");
+    if (Number.isNaN(order_index) || order_index < 0 || order_index >= storm_order.length)
+        throw Error("Invalid order parameter.");
 
     const order = storm_order[order_index]?.map((i)=>storm_config.random.blur[i-1]);
-    if (order == undefined || order.length != storm_stimuli.length)
+    if (order == undefined || order.length != stimuli.length)
         throw Error("Invalid orderfile.");
 
     // Assign trial variables according to randomization table.
     let trial_variables: any[] = [];
 
-    for (let i = 0; i < storm_stimuli.length; i++) {
-            trial_variables.push({image_uri: storm_stimuli[i], blur: order[i]})
+    for (let i = 0; i < stimuli.length; i++) {
+            trial_variables.push({image_uri: stimuli[i], blur: order[i]})
     }
 
     // Fully randomize the trial order.

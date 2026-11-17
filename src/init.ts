@@ -24,7 +24,16 @@ console.log(BUILD);
 document.title = storm_config.webtitle ?? storm_config.name;
 
 const params = new URLSearchParams(window.location.search);
-const savemode = params.get("save") || "post"
+const savemode = params.get("save") || "post";
+
+// Alert the user if there is an error, but obscure the details.
+window.addEventListener("error", (evt)=>{
+    if (PRODUCTION) {
+        evt.preventDefault()
+        console.log("The application hit an error and had to stop.");    
+    }
+    alert(PRODUCTION ? storm_config.messages.error :  evt?.error?.message);
+});
 
 if (PRODUCTION) {
     // Prevent access on non-HTTPS connections, and ensure crypto is available.
@@ -39,6 +48,15 @@ if (PRODUCTION) {
 
 // A random unique identifier for this session to be stored with data files.
 const session_id = crypto.randomUUID();
+
+// Find the stimulus set to be used.
+const set_index = Number.parseInt(params.get("set") || "0");
+if (Number.isNaN(set_index) || set_index < 0 || set_index >= storm_stimuli.length)
+    throw Error("Invalid stimulus set parameter.");
+    
+const stimuli_set = storm_stimuli[set_index];
+if (!stimuli_set)
+    throw Error("Invalid stimuli file or set/order parameter.");
 
 // Global variable to track the most recent trial start. See below.
 let time_trial_start: number;
@@ -82,7 +100,7 @@ timeline.push({
     session: session_id,
     date: () => jsPsych.getStartTime().toISOString(),
     experiment: storm_config,
-    stimuli: storm_stimuli
+    stimuli: stimuli_set
 });
 
 // Load the stimuli.
@@ -90,7 +108,7 @@ timeline.push({
     type: jsp_preload, 
     // auto_preload: true, // Not using image plugin, so must list images used in html blocks.
     images: [
-        storm_config.url_stimuli.directories.flat().map(dir=>storm_stimuli.map(
+        storm_config.url_stimuli.directories.flat().map(dir=>stimuli_set.map(
             stim => storm_config.url_stimuli.location + dir + "/" + stim
         )),
         storm_config.url_stimuli.special.map(uri=>storm_config.url_stimuli.location + uri)
@@ -123,7 +141,7 @@ timeline.push({
 });
 
 // The main experiment timeline.
-const experiment_timeline: any[] = storm_experiment(jsPsych, params);
+const experiment_timeline: any[] = storm_experiment(jsPsych, params, stimuli_set);
 
 // At the end of the experiment timeline, collect just that timeline's data as a CSV.
 experiment_timeline.push({
