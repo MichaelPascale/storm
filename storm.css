@@ -209,6 +209,23 @@ body {
     cursor: not-allowed;
 }
 
+input[type="text"] {
+    appearance: none;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    background-color: var(--storm-ctrl-fg);
+    border-color: var(--storm-ctrl-brd);
+    border-radius: 3px;
+    min-height: 1.2lh;
+    padding: .2lh;
+}
+
+input[type="text"]:focus {
+    outline: none;
+    background-color: var(--storm-ctrl-fg-hov);
+    border-color: var(--storm-ctrl-brd-hov);
+}
+
 /*  Experimental modifications to the range input for displaying tick marks. */
 .jspsych-slider.storm-rating-exp::-moz-range-track {
     width: calc(100% - 24px);
