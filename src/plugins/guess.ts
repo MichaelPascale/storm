@@ -127,7 +127,6 @@ class jsp_plugin_guess implements JsPsychPlugin<Info> {
     fixation.hidden = true;
     presentation.appendChild(fixation);
 
-    console.log(trial.style);
     const stim = document.createElement("img");
     if (trial.stimulus) {
       stim.src = trial.stimulus;
@@ -228,9 +227,11 @@ class jsp_plugin_guess implements JsPsychPlugin<Info> {
         response: q1input.value,
         rating: q2input.valueAsNumber,
         slider_start: trial.slider_start,
+        stimulus: JSON.stringify(trial.stimulus),
         detail: JSON.stringify({
           response_final_mod_rt: q1rt,
-          rating_final_mod_rt: q2rt 
+          rating_final_mod_rt: q2rt,
+          style: trial.style
         })
       });
     });
@@ -290,9 +291,11 @@ class jsp_plugin_guess implements JsPsychPlugin<Info> {
           response: q1rt ? q1input.value || "" : "",
           rating: q2rt ? q2input.valueAsNumber || NaN : NaN,
           slider_start: trial.slider_start,
+          stimulus: JSON.stringify(trial.stimulus),
           detail: JSON.stringify({
             response_final_mod_rt: q1rt,
-            rating_final_mod_rt: q2rt
+            rating_final_mod_rt: q2rt,
+            style: trial.style
           })
         });
       }, trial.trial_duration);
