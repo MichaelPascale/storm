@@ -269,6 +269,7 @@ class jsp_plugin_guess implements JsPsychPlugin<Info> {
       presentation.hidden = true;
       responseform.hidden = false;
       document.body.style.cursor = "auto";
+      q1input.focus();
       startTime = performance.now();
     }
 
