@@ -201,7 +201,7 @@ class jsp_plugin_rate implements JsPsychPlugin<Info> {
         rt: response.rt,
         stimulus: trial.stimulus,
         slider_start: trial.slider_start,
-        response: response.rating,
+        rating: response.rating,
       };
 
       // next trial
