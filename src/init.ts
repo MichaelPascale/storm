@@ -55,7 +55,7 @@ if (Number.isNaN(set_index) || set_index < 0 || set_index >= storm_stimuli.lengt
     throw Error("Invalid stimulus set parameter.");
     
 const stimuli_set = storm_stimuli[set_index];
-if (!stimuli_set)
+if (!stimuli_set || stimuli_set.length != storm_config.trials)
     throw Error("Invalid stimuli file or set/order parameter.");
 
 // Global variable to track the most recent trial start. See below.
@@ -141,7 +141,7 @@ timeline.push({
 });
 
 // The main experiment timeline.
-const experiment_timeline: any[] = storm_experiment(jsPsych, params, stimuli_set);
+const experiment_timeline: any[] = storm_experiment(jsPsych, params, stimuli_set, set_index);
 
 // At the end of the experiment timeline, collect just that timeline's data as a CSV.
 experiment_timeline.push({

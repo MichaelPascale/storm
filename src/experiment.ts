@@ -16,16 +16,22 @@ import jsp_plugin_rate from "./plugins/rate";
 import jsp_plugin_guess from "./plugins/guess";
 
 import storm_config from "./config.json" with {type: "json"};
-import storm_stimuli from "./stimuli.json" with {type: "json"};
 import storm_order from "./order.json" with {type: "json"};
 
-export default function (jsPsych: JsPsych, params: URLSearchParams, stimuli: string[]) {
+export default function (jsPsych: JsPsych, params: URLSearchParams, stimuli: string[], set_index: number) {
+
+    if (set_index >= storm_order.length)
+        throw Error("Invalid set number for the specific orderfile.")
+
+    const orders = storm_order[set_index];
+    if (orders == undefined)
+        throw Error("Invalid orderfile.");
 
     const order_index = Number.parseInt(params.get("ord") || "0");
-    if (Number.isNaN(order_index) || order_index < 0 || order_index >= storm_order.length)
+    if (Number.isNaN(order_index) || order_index < 0 || order_index >= orders.length)
         throw Error("Invalid order parameter.");
 
-    const order = storm_order[order_index]?.map((i)=>storm_config.random.blur[i-1]);
+    const order = orders[order_index]?.map((i)=>storm_config.random.blur[i-1]);
     if (order == undefined || order.length != stimuli.length)
         throw Error("Invalid orderfile.");
 
