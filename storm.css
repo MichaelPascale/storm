@@ -126,14 +126,12 @@ body {
     cursor: none;
     width: var(--storm-stim-width);
     height: var(--storm-stim-height);
-    /* The border is necessary so that this element takes up the same width as storm-box. */
-    border: var(--storm-stim-border-width) solid transparent;
 }
 
 .storm-box {
     width: 100mm;
     height: 100mm;
-    border: var(--storm-stim-border-width) dashed var(--storm-stim-border);
+    outline: var(--storm-stim-border-width) dashed var(--storm-stim-border);
     display: flex;
     justify-content: center;
     align-items: center;
