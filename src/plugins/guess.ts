@@ -153,7 +153,7 @@ class jsp_plugin_guess implements JsPsychPlugin<Info> {
       q1input.placeholder = trial.placeholder_response || "";
 
     let q1rt: number = NaN;
-    q1input.addEventListener("input", ()=>{q1rt = Math.round(performance.now() - startTime)}); 
+    q1input.addEventListener("keydown", ()=>{q1rt = Math.round(performance.now() - startTime)}); 
 
     q1block.innerHTML = trial.prompt_response || "";
     q1block.appendChild(q1input);
@@ -277,10 +277,16 @@ class jsp_plugin_guess implements JsPsychPlugin<Info> {
     onfixation();
 
     if (trial.require_movement) {
-      const enable_button = () => { button.disabled = false; };
+      const enable_button = () => { 
+        if (q1rt && q2rt)
+          button.disabled = false;
+      };
       q1input.addEventListener("mousedown", enable_button);
-      q1input.addEventListener("touchstart", enable_button);
+      q1input.addEventListener("keyup", enable_button);
       q1input.addEventListener("change", enable_button);
+      q2input.addEventListener("mousedown", enable_button);
+      q2input.addEventListener("touchstart", enable_button);
+      q2input.addEventListener("change", enable_button);
     }
 
     if (typeof trial.trial_duration === "number") {
