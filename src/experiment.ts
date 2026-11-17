@@ -104,7 +104,7 @@ return [
             {
                 type: jsp_plugin_guess,
                 stimulus: ()=>`${storm_config.url_stimuli.location + storm_config.url_stimuli.special[0]}`,
-                style: ()=>`filter: blur(${2}px);`,
+                style: "filter: blur(2px);",
                 prompt_response: storm_config.messages.guess,
                 placeholder_response: "duck",
                 prompt_rating: storm_config.messages.confidence,
@@ -194,7 +194,7 @@ return [
 
                     return [id, id.replace("shine", "desat")];
                 },
-                style: [`filter: blur(${jsPsych.evaluateTimelineVariable("blur")}px);`, ""],
+                style: ()=>[`filter: blur(${jsPsych.evaluateTimelineVariable("blur")}px);`, ""],
                 prompt: storm_config.messages.curiosity,
                 labels: storm_config.messages.curiosity_labels,
                 slider_start: 50,
