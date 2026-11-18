@@ -30,7 +30,7 @@ function storm_save(data: DataCollection, name: string, type: "csv" | "json" = "
     if (mode == "post") {
         http(
             PRODUCTION ? storm_config.url_post : 'http://localhost:8000/save_file.php', 
-            {item: name, type: type, filedata: data},
+            {item: name, type: type, filedata: type == "csv" ? data.csv() : data.json()},
             undefined,
             callback
         );
